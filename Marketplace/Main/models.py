@@ -26,6 +26,9 @@ class InStockProduct(models.Model):
     warranty_status = models.CharField(max_length=100)
     distributor_info = models.TextField()
 
+    def __str__(self):
+        return self.name
+
 class OrderedProduct(models.Model):
     ID = models.IntegerField(primary_key=True)
     name = models.CharField(max_length=100)
@@ -39,3 +42,6 @@ class OrderedProduct(models.Model):
     delivery_address = models.TextField()
     recipient = models.ForeignKey(User, on_delete=models.CASCADE)
     order_process_status = models.CharField(max_length=100, default="processing")
+
+    def __str__(self):
+        return self.name
