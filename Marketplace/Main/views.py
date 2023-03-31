@@ -1,9 +1,15 @@
 from django.shortcuts import render
+from .models import InStockProduct, OrderedProduct, User
 
 # Create your views here.
 
 def index(request):
-    return render(request,"index.html")
+    data = {
+        "instockproducts": InStockProduct.objects.all()
+        #"orderedproducts": OrderedProduct.objects.all(),
+        #"users": User.objects.all()
+    }
+    return render(request,"index.html", data)
 
 def login(request):
     return render(request,"login.html")

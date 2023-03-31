@@ -14,6 +14,13 @@
   </head>
 
   <body>
-    {% include 'partials/_navbar.html' %} Welcome!
+    {% include 'partials/_navbar.html' %}
+    <div class="col-9">
+      <div class="row">
+        {% for i in instockproducts %}
+        <div class="col-4">{% include 'partials/_product.html' %}</div>
+        {% endfor %}
+      </div>
+    </div>
   </body>
 </html>

@@ -1,0 +1,11 @@
+{% load static %}
+<link rel="stylesheet" href="{% static 'css/styles.css' %}" />
+<div class="card mb-2" style="width: 100%">
+  <img src="{{ i.image }}" class="card-img-top" alt="..." />
+  <div class="card-body">
+    <h5 class="card-title">{{ i.name }}</h5>
+    <p class="card-text">{{ i.price }} ₺</p>
+    <p class="card-text">In Stocks: {{ i.quantity_in_stocks }}</p>
+    <a href="..." class="btn btn-danger">Details...</a>
+  </div>
+</div>
