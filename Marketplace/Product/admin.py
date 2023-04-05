@@ -1,7 +1,10 @@
+from django import forms
 from django.contrib import admin
 
-# Register your models here.
-from .models import InStockProduct,OrderedProduct,User,Category
+from .models import Users,Category,OrderedProduct,InStockProduct
+
+
+
 
 class ProductAdmin(admin.ModelAdmin):
     readonly_fields = ('ID',)
@@ -9,5 +12,5 @@ class ProductAdmin(admin.ModelAdmin):
 # Register your models here.
 admin.site.register(InStockProduct, ProductAdmin)
 admin.site.register(OrderedProduct)
-admin.site.register(User)
+admin.site.register(Users)
 admin.site.register(Category)
