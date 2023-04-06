@@ -12,7 +12,8 @@
 					<div class="card-body p-5 text-center">
 
 						<h3 class="mb-5">Log in</h3>
-
+						<form method = "post" action="."></form>
+						{% csrf_token %}
 						<div class="form-outline mb-4">
 							<label class="form-label" for="username">Username:</label>
 							{{form.username}}
@@ -36,6 +37,7 @@
 								style="background-color: #3b5998;" type="submit"><i
 									class="fab fa-facebook-f me-2"></i>Sign in with facebook</button>
 						</div>
+						</form>
 					</div>
 				</div>
 			</div>

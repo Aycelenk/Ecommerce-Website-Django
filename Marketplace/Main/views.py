@@ -1,6 +1,6 @@
-from django.shortcuts import render
+from django.shortcuts import render,redirect
 from Product.models import InStockProduct, OrderedProduct, Users
-
+from .forms import LoginForm,SignupForm
 # Create your views here.
 
 def index(request):
@@ -13,7 +13,25 @@ def index(request):
 
 
 def login(request):
-    return render(request,"login.html")
+    if request.method == "POST":
+        form = LoginForm(request.POST)
+        # databaseden formdaki bilgilerdeki usera ara
+        if form.is_valid():
+            #LOgin et
+            pass
+        else:
+            #hata göster
+            pass
+    else:
+        form = LoginForm()
+        return render(request,"login.html",{"form":form})
 
 def signup(request):
-    return render(request,"signup.html")
+    if request.method == "POST":
+        form = SignupForm(request.POST)
+        if form.is_valid():
+            form.save()
+        return redirect("/")
+    else:
+        form = SignupForm()
+        return render(request,"signup.html",{"form":form})
