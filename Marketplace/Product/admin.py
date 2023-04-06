@@ -4,8 +4,6 @@ from django.contrib import admin
 from .models import Users,Category,OrderedProduct,InStockProduct
 
 
-
-
 class ProductAdmin(admin.ModelAdmin):
     readonly_fields = ('ID',)
 
