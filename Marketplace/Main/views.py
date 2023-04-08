@@ -1,6 +1,7 @@
 from django.shortcuts import render,redirect
 from Product.models import InStockProduct, OrderedProduct, Users
 from .forms import LoginForm,SignupForm
+from django.contrib.auth import authenticate,login
 # Create your views here.
 
 def index(request):
@@ -17,11 +18,14 @@ def login(request):
         form = LoginForm(request.POST)
         # databaseden formdaki bilgilerdeki usera ara
         if form.is_valid():
-            #LOgin et
-            pass
+            username = form.username
+            password = form.password
+            user = authenticate(request,username = username,password = password)
+            if user is not None:
+                login(request,user)
+                return redirect("/")
         else:
-            #hata göster
-            pass
+            return render(request,"login.html",{"form":form})
     else:
         form = LoginForm()
         return render(request,"login.html",{"form":form})
