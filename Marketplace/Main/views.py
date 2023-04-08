@@ -41,7 +41,7 @@ def signup(request):
         form = SignupForm(request.POST)
         if form.is_valid():
             form.save()
-            return redirect("/")
+            return redirect("login")
         else:
             return render(request,"signup.html",{"form":form})
     else:
