@@ -1,7 +1,9 @@
+from django.http import HttpResponse
 from django.shortcuts import render,redirect
 from Product.models import InStockProduct, OrderedProduct, Users
 from .forms import LoginForm,SignupForm
-from django.contrib.auth import authenticate,login
+from django.contrib.auth import authenticate
+from django.contrib.auth import login as auth_login
 # Create your views here.
 
 def index(request):
@@ -15,17 +17,21 @@ def index(request):
 
 def login(request):
     if request.method == "POST":
-        form = LoginForm(request.POST)
+        form = LoginForm(data = request.POST)
         # databaseden formdaki bilgilerdeki usera ara
+        username = form.data.get("username")
+        password = form.data.get("password")
         if form.is_valid():
-            username = form.username
-            password = form.password
             user = authenticate(request,username = username,password = password)
             if user is not None:
-                login(request,user)
+                auth_login(request,user)
                 return redirect("/")
+            else:
+                return HttpResponse(form.error_messages["invalid_login"])
         else:
+            print(form.errors)
             return render(request,"login.html",{"form":form})
+            
     else:
         form = LoginForm()
         return render(request,"login.html",{"form":form})

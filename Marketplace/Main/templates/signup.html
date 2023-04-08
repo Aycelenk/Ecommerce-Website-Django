@@ -10,7 +10,7 @@
 {% block content %}
 <div class="sign-up-sheet">
   <h1>Sign Up</h1>
-  <form method = "post">
+  <form method = "POST">
     {% csrf_token %}
     <label>First Name</label>
     {{form.first_name}}
