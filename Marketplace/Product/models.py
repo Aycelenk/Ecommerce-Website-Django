@@ -79,7 +79,7 @@ class Users(AbstractBaseUser,PermissionsMixin):
 class InStockProduct(models.Model):
     ID = models.AutoField(primary_key=True)
     category = models.ForeignKey(Category,related_name = "products",on_delete=models.CASCADE)
-    image = models.ImageField(upload_to="Product/static/img/")
+    image = models.ImageField(upload_to="product_images")
     name = models.CharField(max_length=100)
     model = models.CharField(max_length=100)
     number = models.IntegerField()
