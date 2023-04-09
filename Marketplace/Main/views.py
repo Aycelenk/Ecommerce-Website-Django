@@ -2,7 +2,7 @@ from django.http import HttpResponse
 from django.shortcuts import render,redirect
 from Product.models import InStockProduct, OrderedProduct, Users
 from .forms import LoginForm,SignupForm
-from django.contrib.auth import authenticate
+from django.contrib.auth import authenticate,logout
 from django.contrib.auth import login as auth_login
 # Create your views here.
 
@@ -10,7 +10,7 @@ def index(request):
     data = {
         "instockproducts": InStockProduct.objects.all(),
         "orderedproducts": OrderedProduct.objects.all(),
-        "users": Users.objects.all()
+        #"users": Users.objects.all()
     }
     return render(request,"index.html", data)
 
@@ -47,3 +47,7 @@ def signup(request):
     else:
         form = SignupForm()
         return render(request,"signup.html",{"form":form})
+    
+def logout_view(request):
+    logout(request)
+    return redirect("/")

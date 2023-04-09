@@ -4,7 +4,7 @@
 
 
 {% block content %}
-<section class="vh-100" style="background-color: #3B2F2F;">
+<section class="vh-120" style="background-color: #3B2F2F;">
 	<div class="container py-5 h-100">
 		<div class="row d-flex justify-content-center align-items-center h-100">
 			<div class="col-12 col-md-8 col-lg-6 col-xl-5">
@@ -33,7 +33,7 @@
 								</div>
 								{% endif %}
 							<button class="btn btn-primary btn-lg btn-block" type="submit">Login</button>
-								<p style= "margin-top:15px; margin-bottom:15px;"> <a href="{% url 'signup' %}">Sign-up</a> </p>
+							<p style="margin-top: 15px; margin-bottom: 10px">Don't have an account? <a href="{% url 'signup' %}">Sign up</a></p>
 							<hr class="my-4">
 
 							<div class="btn-group-vertical">

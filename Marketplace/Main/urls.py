@@ -6,5 +6,6 @@ from .forms import LoginForm
 urlpatterns = [
     path("login/",views.login,name = "login"),
     path("",views.index,name="index"),
+    path("logout",views.logout_view,name = "logout"),
     path("signup/",views.signup,name = "signup"),
 ]

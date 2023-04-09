@@ -1,15 +1,38 @@
 {% extends 'base.html' %}
 
 {% block title %} Detail {% endblock %}
-
+{% load static %}
+{% block link %}
+<link rel="stylesheet" type="text/css" href="{% static 'detail.css' %}">
+{% endblock %}
 {% block content %}
-<div class="container-fluid">
-    <div class="row">
-        <div class="col-md-6">
-            <img src="{{product.image.url}}" alt="" class="img-fluid">
-        </div>
-        <div class="col-md-6">
-            <p>hello</p>
+<div class="container">
+    <br>
+    <div class="card">
+        <div class="card-body">
+            <h3 class="card-title">{{product.name}}</h3>
+            <h6 class="card-subtitle">{{category.name}}</h6>
+            <div class="row">
+                <div class="col-lg-5 col-md-5 col-sm-6">
+                    <div class="white-box text-center"><img src="{{product.image.url}}" height="430" weigth="600"
+                            class="img-responsive"></div>
+                </div>
+                <div class="col-lg-7 col-md-7 col-sm-6 justify-content-center">
+                    <h5 class="box-title mt-2">Model</h5>
+                    <p>{{product.model}}</p>
+                    <h5 class="box-title mt-2">Description</h5>
+                    <p>{{product.description}}</p>
+                    <h5 class="box-title mt-2">Quantity in stock</h5>
+                    <p>{{product.quantity_in_stocks}}</p>
+                    <h5 class="box-title mt-2">Price</h5>
+                    <p>{{product.price}}</p>
+                    <h5 class="box-title mt-2">Warranty Status</h5>
+                    <p>{{product.warranty_status}}</p>
+                    <h5 class="box-title mt-2">Distributor Info</h5>
+                    <p>{{product.distributor_info}}</p>
+                    <button class="btn btn-primary btn-rounded">Add to cart</button>
+                </div>
+            </div>
         </div>
     </div>
 </div>
