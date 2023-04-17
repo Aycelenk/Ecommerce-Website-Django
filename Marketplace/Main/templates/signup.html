@@ -1,5 +1,9 @@
 {% extends 'base.html' %} 
-
+{% load crispy_forms_tags %}
+{% load static %}
+{% block link %}
+<link rel="stylesheet" type="text/css" href="{% static 'asterisks.css' %}">
+{% endblock %}
 {% block title %} Signup {% endblock %} 
 
 {% block content %}
@@ -12,19 +16,7 @@
             <h3 class="mb-3" style="margin-top: 0px; margin-bottom: 20px">Sign Up</h3>
             <form method="POST">
               {% csrf_token %}
-              <label style="margin-bottom: 10px">Username:</label>
-              {{form.username}}
-              <label style="margin-bottom: 10px; margin-top: 10px">First Name:</label>
-              {{form.first_name}}
-              <label style="margin-bottom: 10px; margin-top: 10px">Last Name:</label>
-              {{form.last_name}}
-              <label style="margin-bottom: 10px; margin-top: 10px">Your Email:</label>
-              {{form.email}}
-              <label style="margin-bottom: 10px; margin-top: 10px">Password:</label>
-              {{form.password1}}
-              <label style="margin-bottom: 10px; margin-top: 10px">Confirm Password:</label>
-              {{form.password2}} 
-              
+                {{form|crispy}}
               {% if form.errors or form.non_field_errors %}
                 <div class="alert-danger">
                   {% for field in form %}
@@ -36,8 +28,8 @@
                 {% endif %}
               <button class="btn btn-primary btn-lg btn-block" style="margin-top: 20px" type="submit">Sign up</button>
             </form>
-            <p style="margin-top: 15px; margin-bottom: 10px">Already have an account? <a href="{% url 'login' %}">Login</a></p>
-            <p style="font-size: 12px; margin-top: 10px">By creating an account you agree to our<a href="#">Terms and Policy</a>.</p>
+            <p style="margin-top: 15px; margin-bottom: 10px" class="text-muted">Already have an account? <a href="{% url 'login' %}">Login</a></p>
+            <p style="font-size: 12px; margin-top: 10px">By creating an account you agree to our<a href="#"> Terms and Policy</a>.</p>
           </div>
         </div>
       </div>

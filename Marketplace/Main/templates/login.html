@@ -1,5 +1,9 @@
 {% extends 'base.html' %}
-
+{% load crispy_forms_tags %}
+{% load static %}
+{% block link %}
+<link rel="stylesheet" type="text/css" href="{% static 'asterisks.css' %}">
+{% endblock %}
 {% block title %} Login {% endblock %}
 
 
@@ -14,15 +18,7 @@
 						<h3 class="mb-5">Log in</h3>
 						<form method = "POST" action=".">
 							{% csrf_token %}
-							<div class="form-outline mb-4">
-								<label class="form-label" for="username">Username:</label>
-								{{form.username}}
-							</div>
-
-							<div class="form-outline mb-4">
-								<label class="form-label" for="password">Password:</label>
-								{{form.password}}
-							</div>
+								{{form|crispy}}
 							{% if form.errors or form.non_field_errors %}
 								<div class="alert-danger">
 									{% for field in form %}
@@ -33,7 +29,7 @@
 								</div>
 								{% endif %}
 							<button class="btn btn-primary btn-lg btn-block" type="submit">Login</button>
-							<p style="margin-top: 15px; margin-bottom: 10px">Don't have an account? <a href="{% url 'signup' %}">Sign up</a></p>
+							<p style="margin-top: 15px; margin-bottom: 10px" class="text-muted">Don't have an account? <a href="{% url 'signup' %}">Sign up</a></p>
 							<hr class="my-4">
 
 							<div class="btn-group-vertical">
