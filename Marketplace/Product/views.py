@@ -17,6 +17,8 @@ def detail(request,pk):
         comment.save()
 
 
+        return redirect('detail',pk=pk)
+
     return render(request,"detail.html",{
             "product":product,
             "category":category,
