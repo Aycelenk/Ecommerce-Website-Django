@@ -45,7 +45,7 @@
         <div class="card-body">
             <h4 style="margin-bottom:20px;">Comments</h4>
             {% for comment in comments %}
-                {% if comment.product.ID == product.ID%}
+                {% if comment.product.ID == product.ID and comment.approved %}
                     <div class="card-body" style="background-color:#e9ecef; border-radius:10px; margin-bottom:15px;">
                         <div style="">
                             <p>
