@@ -108,3 +108,10 @@ class OrderedProduct(models.Model):
 
     def __str__(self):
         return self.name
+
+class Comment(models.Model):
+    product = models.ForeignKey(InStockProduct, related_name='comments' , on_delete=models.CASCADE)
+    user = models.ForeignKey(Users, related_name='comments', on_delete=models.CASCADE)
+    content = models.TextField(blank=True, null=True)
+    stars = models.IntegerField()
+    date_added = models.DateTimeField(auto_now_add=True)
