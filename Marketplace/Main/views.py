@@ -4,6 +4,7 @@ from Product.models import InStockProduct, OrderedProduct, Users
 from .forms import LoginForm,SignupForm
 from django.contrib.auth import authenticate,logout
 from django.contrib.auth import login as auth_login
+from django.contrib import messages
 # Create your views here.
 
 def index(request):
@@ -29,7 +30,6 @@ def login(request):
             else:
                 return HttpResponse(form.error_messages["invalid_login"])
         else:
-            print(form.errors)
             return render(request,"login.html",{"form":form})
             
     else:
@@ -41,6 +41,7 @@ def signup(request):
         form = SignupForm(request.POST)
         if form.is_valid():
             form.save()
+            messages.success(request,f"Account created for {request.POST.get('username')}")
             return redirect("login")
         else:
             return render(request,"signup.html",{"form":form})
