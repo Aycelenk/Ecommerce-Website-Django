@@ -5,7 +5,7 @@ from django.urls import reverse
 # Create your views here.
 def detail(request,pk):
     product = get_object_or_404(InStockProduct,pk=pk)
-    category = Category.objects.filter(id = product.category_id)
+    category = get_object_or_404(Category,id = product.category_id)
     comment = None
     comments = Comment.objects.all()
     #
