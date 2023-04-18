@@ -27,6 +27,12 @@
                     <li class="nav-item">
                         <a class="nav-link active" aria-current="page" href="{% url 'index' %}">Home</a>
                     </li>
+                </ul>
+                <form class="d-flex justify-content-center" role="search">
+                    <input class="form-control me-2" type="search" placeholder="Search" aria-label="Search" />
+                    <button class="btn btn-outline-light" type="submit">Search</button>
+                </form>
+                <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
                     {% if request.user.is_authenticated %}
                     <li class="nav-item">
                         <a class="nav-link" href="{% url 'logout' %}">Logout</a>
@@ -39,11 +45,12 @@
                         <a class="nav-link" href="{% url 'signup' %}">Sign Up</a>
                     </li>
                     {% endif %}
+                    <li class="nav-item">
+                        <a href="{% url 'cart' %}" class="btn btn-primary shadow-0"> <i
+                                class="me-1 fa fa-shopping-basket"></i> Your cart
+                        </a>
+                    </li>
                 </ul>
-                <form class="d-flex" role="search">
-                    <input class="form-control me-2" type="search" placeholder="Search" aria-label="Search" />
-                    <button class="btn btn-outline-light" type="submit">Search</button>
-                </form>
             </div>
         </div>
     </nav>
