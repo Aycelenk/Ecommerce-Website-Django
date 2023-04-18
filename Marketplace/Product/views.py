@@ -1,6 +1,5 @@
 from django.shortcuts import redirect, render,get_object_or_404
 from .models import InStockProduct,Category,Comment
-from django.urls import reverse
 
 # Create your views here.
 def detail(request,pk):
@@ -15,8 +14,6 @@ def detail(request,pk):
 
         comment = Comment.objects.create(product=product, user=request.user, stars=stars, content=content)
         comment.save()
-
-
         return redirect('detail',pk=pk)
 
     return render(request,"detail.html",{
