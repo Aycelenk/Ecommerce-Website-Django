@@ -5,10 +5,11 @@ from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 # Create your views here.
 @login_required
-def cart(request,product_id = None):
-    print(request.META.get('HTTP_REFERER'))
-    if product_id is not None:
-        if request.META.get('HTTP_REFERER') == "http://127.0.0.1:8000/cart/":
+def cart(request):
+    if request.method == "POST":
+        command = request.POST.get("command")
+        product_id = request.POST.get("product_id")
+        if command == "delete":
             #delete that item from cart
             Cart.objects.get(product_id = product_id).delete()
             messages.success(request,f"Item deleted succesfully")

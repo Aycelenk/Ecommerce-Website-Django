@@ -13,9 +13,12 @@
                 {{item}}
             </div>
             <div class="col-3">
-                <a href="{% url 'cart' item.product_id%}" class="btn btn-primary shadow-0"> <i
-                        class="me-1 fa fa-trash"></i> Delete
-                </a>
+                <form method="post" action="{% url 'cart' %}">
+                    {% csrf_token %}
+                    <input type="hidden" name="command" value="delete">
+                    <input type="hidden" name="product_id" value="{{item.product_id}}">
+                    <button class="btn btn-danger" type="submit">Delete</button>
+                </form>
             </div>
         </div>
     </div>
