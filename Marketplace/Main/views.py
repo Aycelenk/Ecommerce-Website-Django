@@ -1,6 +1,6 @@
 from django.http import HttpResponse
 from django.shortcuts import render,redirect
-from Product.models import InStockProduct, OrderedProduct, Users
+from Product.models import InStockProduct, OrderedProduct,Users,Category
 from .forms import LoginForm,SignupForm
 from django.contrib.auth import authenticate,logout
 from django.contrib.auth import login as auth_login
@@ -12,6 +12,7 @@ def index(request):
         "instockproducts": InStockProduct.objects.all(),
         "orderedproducts": OrderedProduct.objects.all(),
         #"users": Users.objects.all()
+        "categories":Category.objects.all()
     }
     return render(request,"index.html", data)
 
