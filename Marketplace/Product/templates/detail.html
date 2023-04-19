@@ -71,7 +71,12 @@
                             </div>
                         </div>
                     </div>
-                    <a href="#" class="btn btn-primary shadow-0"> <i class="me-1 fa fa-shopping-basket"></i> Add to cart
+                    <form method="post" action="{% url 'cart' %}">
+                        {% csrf_token %}
+                        <input type="hidden" name="command" value="add">
+                        <input type="hidden" name="product_id" value="{{product.ID}}">
+                        <button class="btn btn-primary" type="submit">Add to cart</button>
+                    </form>
                     </a>
                 </div>
             </main>

@@ -1,0 +1,16 @@
+{% extends 'base.html' %}
+{% block content %}
+<p>Delivery page</p>
+<div class="container">
+    {% for product in products %}
+        {{product.name}}
+        {{product.model}}
+        {{product.price}}
+        {{product.warranty_status}}
+        {{product.distributor_info}}
+        {{product.name}}
+        {{product.order_number}}
+        {{product.order_process_status}}
+    {% endfor %}
+</div>
+{% endblock %}

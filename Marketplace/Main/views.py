@@ -1,5 +1,5 @@
 from django.http import HttpResponse
-from django.shortcuts import render,redirect
+from django.shortcuts import render,redirect,get_object_or_404
 from Product.models import InStockProduct, OrderedProduct,Users,Category
 from .forms import LoginForm,SignupForm
 from django.contrib.auth import authenticate,logout
@@ -53,3 +53,7 @@ def signup(request):
 def logout_view(request):
     logout(request)
     return redirect("/")
+
+def delivery(request):
+    ordered_products = OrderedProduct.objects.all()
+    return render(request,"delivery.html",{"products":ordered_products})
