@@ -13,6 +13,13 @@
                 {{item}}
             </div>
             <div class="col-3">
+                <form method="post" action="{% url 'buy' %}">
+                    {% csrf_token %}
+                    <input type="hidden" name="product_id" value="{{item.product_id}}">
+                    <button class="btn btn-primary" type="submit">Buy</button>
+                </form>
+            </div>
+            <div class="col-3">
                 <form method="post" action="{% url 'cart' %}">
                     {% csrf_token %}
                     <input type="hidden" name="command" value="delete">

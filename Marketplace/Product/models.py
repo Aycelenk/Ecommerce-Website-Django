@@ -102,7 +102,7 @@ class OrderedProduct(models.Model):
     warranty_status = models.CharField(max_length=100)
     distributor_info = models.TextField()
     order_number = models.CharField(max_length=100)
-    delivery_address = models.TextField()
+    delivery_address = models.TextField(blank=True,null=True)
     recipient = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
     order_process_status = models.CharField(max_length=100, default="processing")
 
