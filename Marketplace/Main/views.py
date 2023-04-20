@@ -5,6 +5,8 @@ from .forms import LoginForm,SignupForm
 from django.contrib.auth import authenticate,logout
 from django.contrib.auth import login as auth_login
 from django.contrib import messages
+from threading import Thread
+from delivery import delivered,in_transit
 # Create your views here.
 
 def index(request):
@@ -55,5 +57,10 @@ def logout_view(request):
     return redirect("/")
 
 def delivery(request):
+    if request.method == "POST":
+        command = request.POST.get("command")
+        product_id = request.POST.get("product_id")
+        if command == "delete":
+            OrderedProduct.objects.get(ID = product_id).delete()
     ordered_products = OrderedProduct.objects.all()
     return render(request,"delivery.html",{"products":ordered_products})
