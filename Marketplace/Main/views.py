@@ -5,11 +5,27 @@ from .forms import LoginForm,SignupForm
 from django.contrib.auth import authenticate,logout
 from django.contrib.auth import login as auth_login
 from django.contrib import messages
-from threading import Thread
-from delivery import delivered,in_transit
+from django.db.models import Q
 # Create your views here.
 
 def index(request):
+    if request.method == "POST":
+        query = request.POST.get("search")
+        searched_product = InStockProduct.objects.get(name = query)
+        category_id = searched_product.category_id
+        categories = Category.objects.all()
+        items = InStockProduct.objects.all()
+
+        if category_id:
+            items = items.filter(category_id=category_id)
+
+        if query:
+            items = items.filter(Q(name=query) | Q(description=query))
+
+        return render(request, 'index.html', {
+            "instockproducts": items,
+            "categories":categories
+        })
     data = {
         "instockproducts": InStockProduct.objects.all(),
         "orderedproducts": OrderedProduct.objects.all(),
@@ -55,6 +71,8 @@ def signup(request):
 def logout_view(request):
     logout(request)
     return redirect("/")
+
+    
 
 def delivery(request):
     if request.method == "POST":

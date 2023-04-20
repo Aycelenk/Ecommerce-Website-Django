@@ -4,7 +4,6 @@ from Product.models import InStockProduct,OrderedProduct,Users
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 # Create your views here.
-@login_required
 def cart(request):
     if request.method == "POST":
         command = request.POST.get("command")
@@ -26,10 +25,10 @@ def cart(request):
     cart_items = Cart.objects.all()
     return render(request,"cart.html",{"items":cart_items})
 
-
+@login_required
 def buy(request):
     if request.META.get('HTTP_REFERER') != "http://127.0.0.1:8000/cart/" or request.method == "GET":
-        return redirect("home")
+        return redirect("index")
     if request.method == "POST":
         product_id = request.POST.get("product_id")
         record_count = OrderedProduct.objects.count()
