@@ -1,8 +1,9 @@
 {% extends 'base.html' %}
 {% block content %}
 <p>Delivery page</p>
-<div class="container">
+<div class="row">
     {% for product in products %}
+    <div class="container">
         {{product.name}}
         {{product.model}}
         {{product.price}}
@@ -11,6 +12,17 @@
         {{product.name}}
         {{product.order_number}}
         {{product.order_process_status}}
+    </div>
+    <div class="container">
+        {% if product.order_process_status == "delivered" %}
+        <form method="post" action="{% url 'delivery' %}">
+            {% csrf_token %}
+            <input type="hidden" name="command" value="delete">
+            <input type="hidden" name="product_id" value="{{product.ID}}">
+            <button class="btn btn-danger" type="submit">Delete</button>
+        </form>
+        {% endif %}
+    </div>
     {% endfor %}
 </div>
 {% endblock %}
