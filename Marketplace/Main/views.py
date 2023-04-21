@@ -10,22 +10,32 @@ from django.db.models import Q
 
 def index(request):
     if request.method == "POST":
-        query = request.POST.get("search")
-        searched_product = InStockProduct.objects.get(name = query)
-        category_id = searched_product.category_id
+        query = request.POST.get("search_field")
+        command = request.POST.get("command")
         categories = Category.objects.all()
-        items = InStockProduct.objects.all()
+        if command == "search":
+            searched_product = InStockProduct.objects.get(name = query)
+            category_id = searched_product.category_id
+            items = InStockProduct.objects.all()
 
-        if category_id:
-            items = items.filter(category_id=category_id)
+            if category_id:
+                items = items.filter(category_id=category_id)
 
-        if query:
-            items = items.filter(Q(name=query) | Q(description=query))
+            if query:
+                items = items.filter(Q(name=query) | Q(description=query))
 
-        return render(request, 'index.html', {
-            "instockproducts": items,
-            "categories":categories
-        })
+            return render(request, 'index.html', {
+                "instockproducts": items,
+                "categories":categories
+            })
+        else:
+            all_products = InStockProduct.objects.all()
+            sorted_products = sorted(all_products,key = lambda x:x.price,reverse=True)
+            messages.success(request, "Items sorted via price in descending order successfully")
+            return render(request, 'index.html', {
+                "instockproducts": sorted_products,
+                "categories":categories
+            })
     data = {
         "instockproducts": InStockProduct.objects.all(),
         "orderedproducts": OrderedProduct.objects.all(),

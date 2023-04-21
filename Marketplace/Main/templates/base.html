@@ -32,7 +32,8 @@
                 <form method="post" class="d-flex justify-content-center" role="search" action="{% url 'index' %}">
                     {% csrf_token %}
                     <input class="form-control me-2" type="search" placeholder="Search" aria-label="Search"
-                        name="search" />
+                        name="search_field" />
+                    <input type="hidden" name="command" value="search">
                     <button class="btn btn-outline-light" type="submit">Search</button>
                 </form>
                 <ul class="navbar-nav ms-auto mb-2 mb-lg-0">

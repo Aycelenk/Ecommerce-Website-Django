@@ -4,12 +4,17 @@
 
 {% block content %}
 <br>
-<div class="container mt3">
+<div class="container mt-0">
   <div class="row">
-    <div class="col-9">
+    <form method="post" action="{% url 'index' %}">
+      {% csrf_token %}
+      <input type="hidden" name="command" value="sort">
+      <button class="btn btn-primary mb-2" type="submit">Sort</button>
+    </form>
+    <div class="col-lg-9">
       <div class="row">
         {% for i in instockproducts %}
-        <div class="col-4">
+        <div class="col-md-4 mb-3">
           <a href="{% url 'detail' i.ID %}">
             <div class="card mb-2" style="width: 100%">
               <img src="{{ i.image }}" class="card-img-top" alt="..." />

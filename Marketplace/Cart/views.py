@@ -20,6 +20,9 @@ def cart(request):
                     messages.error(request,f"This item is already in your cart. Cannot add this item")
                     return redirect('detail',pk=product_id)
             product = get_object_or_404(InStockProduct,pk = product_id)
+            if product.quantity_in_stocks == 0:
+                messages.error(request,f"This item is out of stock. Cannot add this item")
+                return redirect('detail',pk=product_id)
             cart_item = Cart.objects.create(product= product,user= request.user,quantity = 1)
             cart_item.save()
     cart_items = Cart.objects.all()
