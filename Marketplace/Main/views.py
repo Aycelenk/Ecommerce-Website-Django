@@ -1,7 +1,8 @@
-from django.http import HttpResponse
 from django.shortcuts import render,redirect,get_object_or_404
+from django.http import HttpResponse
 from Product.models import InStockProduct, OrderedProduct,Users,Category
 from .forms import LoginForm,SignupForm
+from .helper_functions import check_anonymous_cart_products
 from django.contrib.auth import authenticate,logout
 from django.contrib.auth import login as auth_login
 from django.contrib import messages
@@ -9,6 +10,8 @@ from django.db.models import Q
 # Create your views here.
 
 def index(request):
+    if request.user.is_authenticated:
+        check_anonymous_cart_products(request)
     if request.method == "POST":
         query = request.POST.get("search_field")
         command = request.POST.get("command")
@@ -36,6 +39,9 @@ def index(request):
                 "instockproducts": sorted_products,
                 "categories":categories
             })
+        
+    if request.user.is_staff == True and request.user.is_superuser == True:
+        return redirect("logout")
     data = {
         "instockproducts": InStockProduct.objects.all(),
         "orderedproducts": OrderedProduct.objects.all(),
@@ -46,6 +52,7 @@ def index(request):
 
 
 def login(request):
+    next_url = request.GET.get('next')
     if request.method == "POST":
         form = LoginForm(data = request.POST)
         # databaseden formdaki bilgilerdeki usera ara
@@ -55,15 +62,19 @@ def login(request):
             user = authenticate(request,username = username,password = password)
             if user is not None:
                 auth_login(request,user)
-                return redirect("/")
+                next_url = request.POST.get("next")
+                if next_url:
+                    return redirect("cart")
+                else:
+                    return redirect("index")
             else:
                 return HttpResponse(form.error_messages["invalid_login"])
         else:
-            return render(request,"login.html",{"form":form})
+            return render(request,"login.html",{"form":form,"next":next_url})
             
     else:
         form = LoginForm()
-        return render(request,"login.html",{"form":form})
+        return render(request,"login.html",{"form":form,"next":next_url})
 
 def signup(request):
     if request.method == "POST":
@@ -83,7 +94,6 @@ def logout_view(request):
     return redirect("/")
 
     
-
 def delivery(request):
     if request.method == "POST":
         command = request.POST.get("command")

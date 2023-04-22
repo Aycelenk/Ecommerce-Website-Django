@@ -1,10 +1,14 @@
 from django.shortcuts import render,redirect,get_object_or_404
 from .models import Cart
+from Main.helper_functions import check_anonymous_cart_products
 from Product.models import InStockProduct,OrderedProduct,Users
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 # Create your views here.
+
 def cart(request):
+    if request.user.is_authenticated:
+        check_anonymous_cart_products(request)
     if request.method == "POST":
         command = request.POST.get("command")
         product_id = request.POST.get("product_id")
@@ -23,16 +27,23 @@ def cart(request):
             if product.quantity_in_stocks == 0:
                 messages.error(request,f"This item is out of stock. Cannot add this item")
                 return redirect('detail',pk=product_id)
-            cart_item = Cart.objects.create(product= product,user= request.user,quantity = 1)
-            cart_item.save()
+            if request.user.is_authenticated:
+                cart_item = Cart.objects.create(product= product,user= request.user,quantity = 1)
+                cart_item.save()
+            else:
+                if Users.objects.filter(username = "Anonymous User").exists():
+                    anon_user = Users.objects.get(username = "Anonymous User")
+                else:
+                    anon_user = Users.objects.create_user(is_active = False,role = "Anonymous User")
+                cart_item = Cart.objects.create(product= product,user = anon_user,quantity = 1)
+                cart_item.save()
     cart_items = Cart.objects.all()
     return render(request,"cart.html",{"items":cart_items})
 
 @login_required
 def buy(request):
-    if request.META.get('HTTP_REFERER') != "http://127.0.0.1:8000/cart/" or request.method == "GET":
-        return redirect("index")
     if request.method == "POST":
+        check_anonymous_cart_products(request)
         product_id = request.POST.get("product_id")
         record_count = OrderedProduct.objects.count()
         product = get_object_or_404(InStockProduct,pk = product_id)

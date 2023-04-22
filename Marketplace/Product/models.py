@@ -1,6 +1,8 @@
 from django.db import models
 from django.contrib.auth.models import AbstractBaseUser,PermissionsMixin,UserManager
 from django.conf import settings
+from django.core.mail import send_mail
+from django.contrib.auth.validators import UnicodeUsernameValidator
 from django.utils import timezone
 # Create your models here.
 class Category(models.Model):
@@ -18,8 +20,11 @@ class MyUserManager(UserManager):
         """
         Creates and saves a User with the given email, username and password.
         """
-        if not username:
-            raise ValueError('Users must have an username')
+        if username == None and extra_fields["is_active"] == False:
+            username = "Anonymous User"
+        else:
+            if not username:
+                raise ValueError('Users must have an username')
 
         email = self.normalize_email(email)
         user = self.model(email = email,username = username,**extra_fields)
@@ -42,14 +47,28 @@ class MyUserManager(UserManager):
         return self._create_user(email,username,password,**extra_fields)
 
 class Users(AbstractBaseUser,PermissionsMixin):
+    username_validator = UnicodeUsernameValidator()
+
     ID = models.AutoField(primary_key=True)
     email = models.EmailField(blank=True,default='')
-    first_name = models.CharField(max_length=30,default='',blank=True)
-    last_name = models.CharField(max_length=30,default='',blank=True)
-    is_active = models.BooleanField(default=True)
+    first_name = models.CharField(max_length=150,default='',blank=True)
+    last_name = models.CharField(max_length=150,default='',blank=True)
+    is_active = models.BooleanField(default=True,help_text=
+            "Designates whether this user should be treated as active. "
+            "Unselect this instead of deleting accounts."
+    )
     is_superuser = models.BooleanField(default=False)
-    is_staff = models.BooleanField(default=False)
-    username = models.CharField(max_length=100,unique=True)
+    is_staff = models.BooleanField(default=False,help_text="Designates whether the user can log into this admin site.")
+    username = models.CharField(max_length=150,
+        unique=True,
+        help_text=(
+            "Required. 150 characters or fewer. Letters, digits and @/./+/-/_ only."
+        ),
+        validators=[username_validator],
+        error_messages={
+            "unique": "A user with that username already exists.",
+        }
+    )
     tax_ID = models.IntegerField(default=0)
     home_address = models.TextField(blank=True,null=True)
     role = models.CharField(max_length=100,default='customer')
@@ -73,7 +92,9 @@ class Users(AbstractBaseUser,PermissionsMixin):
     def get_full_name(self):
         return self.username
     
-
+    def email_user(self, subject, message, from_email=None, **kwargs):
+        """Send an email to this user."""
+        send_mail(subject, message, from_email, [self.email], **kwargs)
 
     
 class InStockProduct(models.Model):
