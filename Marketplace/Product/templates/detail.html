@@ -57,23 +57,26 @@
                         <div class="col-md-4 col-6 mb-3">
                             <label class="mb-2 d-block">Quantity</label>
                             <div class="input-group mb-3" style="width: 170px;">
-                                <button class="btn btn-white border border-secondary px-3" type="button"
-                                    id="button-addon1" data-mdb-ripple-color="dark">
-                                    <i class="fa fa-minus"></i>
-                                </button>
-                                <input type="text" class="form-control text-center border border-secondary"
-                                    placeholder="0" aria-label="Example text with button addon"
-                                    aria-describedby="button-addon1" />
-                                <button class="btn btn-white border border-secondary px-3" type="button"
-                                    id="button-addon2" data-mdb-ripple-color="dark">
-                                    <i class="fa fa-plus"></i>
-                                </button>
+                                <form method="post" class="form-control" action="{% url 'detail' product.ID %}">
+                                    <button class="btn btn-white border border-secondary px-3" type="submit"
+                                        id="button-addon1" data-mdb-ripple-color="dark" name="minus_button">
+                                        <i class="fa fa-minus"></i>
+                                    </button>
+                                    <input type="text" class="form-control text-center border border-secondary"
+                                        value="{{quantity}}" aria-label="Example text with button addon"
+                                        aria-describedby="button-addon1" name="quantity_field" />
+                                    <button class="btn btn-white border border-secondary px-3" type="submit"
+                                        id="button-addon2" data-mdb-ripple-color="dark" name="plus_button">
+                                        <i class="fa fa-plus"></i>
+                                    </button>
+                                </form>
                             </div>
                         </div>
                     </div>
                     <form method="post" action="{% url 'cart' %}">
                         {% csrf_token %}
                         <input type="hidden" name="command" value="add">
+                        <input type="hidden" name="quantity" value="{{quantity}}">
                         <input type="hidden" name="product_id" value="{{product.ID}}">
                         <button class="btn btn-primary" type="submit">Add to cart</button>
                     </form>

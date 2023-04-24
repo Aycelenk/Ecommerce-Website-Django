@@ -24,18 +24,19 @@ def cart(request):
                     messages.error(request,f"This item is already in your cart. Cannot add this item")
                     return redirect('detail',pk=product_id)
             product = get_object_or_404(InStockProduct,pk = product_id)
+            quantity = request.POST.get("quantity")
             if product.quantity_in_stocks == 0:
                 messages.error(request,f"This item is out of stock. Cannot add this item")
                 return redirect('detail',pk=product_id)
             if request.user.is_authenticated:
-                cart_item = Cart.objects.create(product= product,user= request.user,quantity = 1)
+                cart_item = Cart.objects.create(product= product,user= request.user,quantity = quantity)
                 cart_item.save()
             else:
                 if Users.objects.filter(username = "Anonymous User").exists():
                     anon_user = Users.objects.get(username = "Anonymous User")
                 else:
                     anon_user = Users.objects.create_user(is_active = False,role = "Anonymous User")
-                cart_item = Cart.objects.create(product= product,user = anon_user,quantity = 1)
+                cart_item = Cart.objects.create(product= product,user = anon_user,quantity = quantity)
                 cart_item.save()
     cart_items = Cart.objects.all()
     return render(request,"cart.html",{"items":cart_items})
@@ -45,6 +46,7 @@ def buy(request):
     if request.method == "POST":
         check_anonymous_cart_products(request)
         product_id = request.POST.get("product_id")
+        quantity = request.POST.get("quantity")
         record_count = OrderedProduct.objects.count()
         product = get_object_or_404(InStockProduct,pk = product_id)
         user = request.user
@@ -55,7 +57,7 @@ def buy(request):
         ordered_item.save()
         Cart.objects.get(product_id = product_id).delete()
         messages.success(request,f"Product is bought successfully.You can check the delivery process in delivery tab")
-        product.quantity_in_stocks -= 1
+        product.quantity_in_stocks -= quantity
         product.save()
         return render(request,"buy.html",{"product":product})
 

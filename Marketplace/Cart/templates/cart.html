@@ -16,6 +16,7 @@
                 <form method="post" action="{% url 'buy' %}">
                     {% csrf_token %}
                     <input type="hidden" name="product_id" value="{{item.product_id}}">
+                    <input type="hidden" name="quantity" value="{{item.quantity}}">
                     <button class="btn btn-primary" type="submit">Buy</button>
                 </form>
             </div>
