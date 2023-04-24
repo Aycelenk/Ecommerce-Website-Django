@@ -126,6 +126,7 @@ class OrderedProduct(models.Model):
     delivery_address = models.TextField(blank=True,null=True)
     recipient = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
     order_process_status = models.CharField(max_length=100, default="processing")
+    quantity = models.IntegerField()
 
     def __str__(self):
         return self.name

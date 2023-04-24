@@ -12,5 +12,9 @@ def check_anonymous_cart_products(request):
         #create a new cart item with the logged in user
         for item in Cart.objects.filter(user = anon_user):
             product = item.product
-            Cart.objects.create(product= product,user= request.user,quantity = 1)
+            Cart.objects.create(product= product,user= request.user,quantity = item.quantity)
         Users.objects.filter(username = "Anonymous User").delete() 
+
+
+
+           
