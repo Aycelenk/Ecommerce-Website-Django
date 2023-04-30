@@ -24,7 +24,7 @@ def cart(request):
                     messages.error(request,f"This item is already in your cart. Cannot add this item")
                     return redirect('detail',pk=product_id)
             product = get_object_or_404(InStockProduct,pk = product_id)
-            quantity = request.POST.get("quantity")
+            quantity = int(request.POST.get("quantity"))
             if product.quantity_in_stocks == 0:
                 messages.error(request,f"This item is out of stock. Cannot add this item")
                 return redirect('detail',pk=product_id)
@@ -50,14 +50,14 @@ def buy(request):
     if request.method == "POST":
         check_anonymous_cart_products(request)
         product_id = request.POST.get("product_id")
-        quantity = request.POST.get("quantity")
+        quantity = int(request.POST.get("quantity"))
         record_count = OrderedProduct.objects.count()
         product = get_object_or_404(InStockProduct,pk = product_id)
         user = request.user
         ordered_item = OrderedProduct.objects.create(ID = record_count + 1,name= product.name,model=product.model,
         number=product.number,description=product.description,price=product.price,
         warranty_status=product.warranty_status,distributor_info=product.distributor_info,
-        order_number=str(record_count + 1),delivery_address = "",recipient=user)
+        order_number=str(record_count + 1),delivery_address = "",recipient=user,quantity= quantity)
         ordered_item.save()
         Cart.objects.get(product_id = product_id).delete()
         messages.success(request,f"Product is bought successfully.You can check the delivery process in delivery tab")
