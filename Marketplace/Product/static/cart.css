@@ -73,8 +73,8 @@ ul {
 }
 
 .cart_item_image {
-    width: 133px;
-    height: 133px;
+    width: 74px;
+    height: 74px;
     float: left
 }
 
@@ -89,7 +89,7 @@ ul {
 }
 
 .cart_item_name {
-    margin-left: 7.53%
+    margin-left: 7.2%
 }
 
 .cart_item_title {
@@ -100,7 +100,7 @@ ul {
 
 .cart_item_text {
     font-size: 18px;
-    margin-top: 35px
+    margin-top: 20px
 }
 
 .cart_item_text span {
@@ -117,12 +117,24 @@ ul {
 }
 
 .cart_item_price {
-    text-align: right
+    margin-left: 4%;
+    text-align: center
 }
 
 .cart_item_total {
-    text-align: right
+    margin-left: 4%;
+    text-align: center
 }
+
+.cart_item_button {
+    margin-left: 10%;
+    text-align: center
+}
+
+.cart_item_quantity {
+    margin-left: 4%;
+}
+
 
 .order_total {
     width: 100%;

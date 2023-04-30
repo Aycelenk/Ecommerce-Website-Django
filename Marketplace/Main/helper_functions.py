@@ -23,25 +23,22 @@ def get_products_from_cart_object(cart_items):
         return products
     else:
         for item in cart_items:
-            product = get_object_or_404(InStockProduct,pk = item.product)
+            product = item.product
             products.append(product)
         return products
     
 def price_quantity(cart_items):
     d = {}
     for item in cart_items:
-       product = get_object_or_404(InStockProduct,pk = item.product)
+       product = item.product
        price = item.quantity * product.price
-       d[f"{item.product}"] = price 
+       d[f"{item.product_id}"] = price 
     return d
     
 def total_price(cart_items):
-    total = None
+    total = 0
     for item in cart_items:
-        product = get_object_or_404(InStockProduct,pk = item.product)
+        product = item.product
         price = item.quantity * product.price
         total += price
-    if total is None:
-        return 0
-    else:
-        return total
+    return total

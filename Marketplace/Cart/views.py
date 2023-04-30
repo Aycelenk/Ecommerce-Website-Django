@@ -41,7 +41,11 @@ def cart(request):
     cart_items = Cart.objects.all()
     products = get_products_from_cart_object(cart_items)
     product_to_price = price_quantity(cart_items)
-    related_user = Cart.objects.first()
+    first_item = Cart.objects.first()
+    if first_item is None:
+        related_user = None
+    else:
+        related_user = first_item.user
     total = total_price(cart_items)
     return render(request,"cart.html",{"items":cart_items,"products":products,"user":related_user,"total_price":total,"prices":product_to_price})
 
