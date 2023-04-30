@@ -40,6 +40,9 @@ def cart(request):
                 cart_item.save()
     cart_items = Cart.objects.all()
     products = get_products_from_cart_object(cart_items)
+    for ind,p in enumerate(products):
+        p.quantity = (cart_items[ind].quantity)
+        p.save()
     product_to_price = price_quantity(cart_items)
     first_item = Cart.objects.first()
     if first_item is None:
@@ -47,7 +50,7 @@ def cart(request):
     else:
         related_user = first_item.user
     total = total_price(cart_items)
-    return render(request,"cart.html",{"items":cart_items,"products":products,"user":related_user,"total_price":total,"prices":product_to_price})
+    return render(request,"cart.html",{"products":products,"user":related_user,"total_price":total,"prices":product_to_price})
 
 @login_required
 def buy(request):

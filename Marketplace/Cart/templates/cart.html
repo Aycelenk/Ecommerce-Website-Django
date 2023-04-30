@@ -12,10 +12,11 @@
         <div class="row">
             <div class="col-lg-10 offset-lg-1">
                 <div class="cart_container">
-                    <div class="cart_title">Shopping Cart<small> ({{items|length}} items in the cart)</small></div>
+                    <div class="cart_title">Shopping Cart<small> ({{products|length}} items in the cart)</small></div>
                     <div class="cart_items">
-                        {% for item in items %}
                         {% for product in products %}
+                        <br>
+                        {{product.ID}}
                         <ul class="cart_list">
                             <li class="cart_item clearfix">
                                 <div class="cart_item_image"><img src="{{product.image.url}}" alt=""></div>
@@ -30,7 +31,7 @@
                                     </div>
                                     <div class="cart_item_quantity cart_info_col">
                                         <div class="cart_item_title">Quantity</div>
-                                        <div class="cart_item_text">{{item.quantity}}</div>
+                                        <div class="cart_item_text">{{product.quantity}}</div>
                                     </div>
                                     <div class="cart_item_price cart_info_col">
                                         <div class="cart_item_title">Price</div>
@@ -38,20 +39,20 @@
                                     </div>
                                     <div class="cart_item_total cart_info_col">
                                         <div class="cart_item_title">Total</div>
-                                        <div class="cart_item_text">{{prices.item.product_id}}</div>
+                                        <div class="cart_item_text">{{prices}}</div>
                                     </div>
                                     <div class="cart_buttons justify-content-between">
                                         <form method="post" action="{% url 'buy' %}">
                                             {% csrf_token %}
-                                            <input type="hidden" name="product_id" value="{{item.product_id}}">
-                                            <input type="hidden" name="quantity" value="{{item.quantity}}">
+                                            <input type="hidden" name="product_id" value="{{product.ID}}">
+                                            <input type="hidden" name="quantity" value="{{product.quantity}}">
                                             <button class="btn btn-primary" type="submit">Buy</button>
                                         </form>
 
                                         <form method="post" class="justify-content-center" action="{% url 'cart' %}">
                                             {% csrf_token %}
                                             <input type="hidden" name="command" value="delete">
-                                            <input type="hidden" name="product_id" value="{{item.product_id}}">
+                                            <input type="hidden" name="product_id" value="{{product.ID}}">
                                             <button class="btn btn-danger" type="submit">Delete</button>
                                         </form>
                                     </div>
@@ -59,9 +60,8 @@
                             </li>
                         </ul>
                         {% endfor %}
-                        {% endfor %}
                     </div>
-                    {% if items|length != 0 %}
+                    {% if products|length != 0 %}
                     <div class="order_total">
                         <div class="order_total_content text-md-right">
                             <div class="order_total_title">Order Total:</div>

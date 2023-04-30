@@ -28,11 +28,11 @@ def get_products_from_cart_object(cart_items):
         return products
     
 def price_quantity(cart_items):
-    d = {}
+    d = []
     for item in cart_items:
        product = item.product
        price = item.quantity * product.price
-       d[f"{item.product_id}"] = price 
+       d.append(price) 
     return d
     
 def total_price(cart_items):
