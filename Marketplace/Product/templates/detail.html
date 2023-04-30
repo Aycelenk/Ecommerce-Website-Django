@@ -58,6 +58,7 @@
                             <label class="mb-2 d-block">Quantity</label>
                             <div class="input-group mb-3" style="width: 170px;">
                                 <form method="post" class="form-control" action="{% url 'detail' product.ID %}">
+                                    {% csrf_token %}
                                     <button class="btn btn-white border border-secondary px-3" type="submit"
                                         id="button-addon1" data-mdb-ripple-color="dark" name="minus_button">
                                         <i class="fa fa-minus"></i>

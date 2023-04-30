@@ -4,7 +4,7 @@ from .models import InStockProduct,Category,Comment
 quantity = 0
 # Create your views here.
 def detail(request,pk):
-    referrer = request.META.get("HTTP_REFERRER")
+    referrer = request.META.get("HTTP_REFERER")
     if referrer == f"http://127.0.0.1//items//{pk}":
         pass
     else:

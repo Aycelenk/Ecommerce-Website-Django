@@ -1,6 +1,6 @@
 from django.shortcuts import render,redirect,get_object_or_404
 from .models import Cart
-from Main.helper_functions import check_anonymous_cart_products
+from Main.helper_functions import check_anonymous_cart_products,get_products_from_cart_object,total_price,price_quantity
 from Product.models import InStockProduct,OrderedProduct,Users
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
@@ -39,7 +39,11 @@ def cart(request):
                 cart_item = Cart.objects.create(product= product,user = anon_user,quantity = quantity)
                 cart_item.save()
     cart_items = Cart.objects.all()
-    return render(request,"cart.html",{"items":cart_items})
+    products = get_products_from_cart_object(cart_items)
+    product_to_price = price_quantity(cart_items)
+    related_user = Cart.objects.first()
+    total = total_price(cart_items)
+    return render(request,"cart.html",{"items":cart_items,"products":products,"user":related_user,"total_price":total,"prices":product_to_price})
 
 @login_required
 def buy(request):

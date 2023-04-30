@@ -1,5 +1,6 @@
 from Product.models import InStockProduct,Users
 from Cart.models import Cart
+from django.shortcuts import get_object_or_404
 
 def check_anonymous_cart_products(request):
     anon_user = None
@@ -14,3 +15,33 @@ def check_anonymous_cart_products(request):
             product = item.product
             Cart.objects.create(product= product,user= request.user,quantity = 1)
         Users.objects.filter(username = "Anonymous User").delete() 
+
+def get_products_from_cart_object(cart_items):
+    products = []
+    count = Cart.objects.count()
+    if count == 0:
+        return products
+    else:
+        for item in cart_items:
+            product = get_object_or_404(InStockProduct,pk = item.product)
+            products.append(product)
+        return products
+    
+def price_quantity(cart_items):
+    d = {}
+    for item in cart_items:
+       product = get_object_or_404(InStockProduct,pk = item.product)
+       price = item.quantity * product.price
+       d[f"{item.product}"] = price 
+    return d
+    
+def total_price(cart_items):
+    total = None
+    for item in cart_items:
+        product = get_object_or_404(InStockProduct,pk = item.product)
+        price = item.quantity * product.price
+        total += price
+    if total is None:
+        return 0
+    else:
+        return total
