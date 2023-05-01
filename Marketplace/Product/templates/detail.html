@@ -98,19 +98,42 @@
     <div class="card-body">
         <h4 style="margin-bottom:20px;">Comments</h4>
         {% for comment in comments %}
-        {% if comment.product.ID == product.ID and comment.approved%}
-        <div class="card-body" style="background-color:#e9ecef; border-radius:10px; margin-bottom:15px;">
-            <div style="">
-                <p>
-                    <strong>Date: </strong>{{ comment.date_added|date:"Y-m-d" }},
-                    <strong> User: </strong>{{comment.user}},
-                    <strong> Stars: </strong>{{comment.stars}}
-                </p>
-                <div style="font-size:18px;">
-                    {{comment.content }}
+        {% if comment.product.ID == product.ID %}
+            {% if comment.approved %}
+            <div class="card-body" style="background-color:#e9ecef; border-radius:10px; margin-bottom:15px;">
+                <div style="">
+                    <p>
+                        <strong>Date: </strong>{{ comment.date_added|date:"Y-m-d" }},
+                        <strong> User: </strong>{{comment.user}},
+                        <strong> Stars: </strong>{{comment.stars}}
+                    </p>
+                    <div style="font-size:18px;">
+                        {{comment.content }}
+                    </div>
                 </div>
             </div>
-        </div>
+            {% else %}
+                {% if user.is_authenticated and comment.user_id == user.ID %}
+                <div class="card-body" style="background-color:#e9ecef; border-radius:10px; margin-bottom:15px;">
+                    <div style="">
+                        <p>
+                            
+                            <strong>Date: </strong>{{ comment.date_added|date:"Y-m-d" }},
+                            <strong> User: </strong>{{comment.user}},
+                            <strong> Stars: </strong>{{comment.stars}}
+                        </p>
+                        <div style="font-size:18px;">
+                            {{comment.content }}
+                        </div>
+                        <p style="margin-top:8px; margin-bottom:0px;">Waiting for product manager approval</p>
+                    </div>
+                </div>
+                {% endif %}
+
+            {% endif %}
+
+
+            
         {% endif %}
 
         {% endfor %}
