@@ -25,6 +25,9 @@ def cart(request):
                     return redirect('detail',pk=product_id)
             product = get_object_or_404(InStockProduct,pk = product_id)
             quantity = int(request.POST.get("quantity"))
+            if quantity == 0:
+                messages.error(request,f"You selected qunatity as zero! Please choose another quantity!")
+                return redirect('detail',pk=product_id)
             if product.quantity_in_stocks == 0:
                 messages.error(request,f"This item is out of stock. Cannot add this item")
                 return redirect('detail',pk=product_id)
@@ -70,5 +73,5 @@ def buy(request):
         messages.success(request,f"Product is bought successfully.You can check the delivery process in delivery tab")
         product.quantity_in_stocks -= quantity
         product.save()
-        return render(request,"buy.html",{"product":product})
+        return render(request,"buy.html",{"product":ordered_item})
 
