@@ -16,6 +16,7 @@ def index(request):
         query = request.POST.get("search_field")
         command = request.POST.get("command")
         categories = Category.objects.all()
+        #sad
         if command == "search":
             try:
                 searched_product = InStockProduct.objects.get(description__icontains=query)
