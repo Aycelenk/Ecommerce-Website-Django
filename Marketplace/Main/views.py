@@ -17,15 +17,23 @@ def index(request):
         command = request.POST.get("command")
         categories = Category.objects.all()
         if command == "search":
-            searched_product = InStockProduct.objects.get(name = query)
-            category_id = searched_product.category_id
-            items = InStockProduct.objects.all()
-
-            if category_id:
-                items = items.filter(category_id=category_id)
+            try:
+                searched_product = InStockProduct.objects.get(description__icontains=query)
+                category_id = searched_product.category_id
+                items = InStockProduct.objects.all()
+            except:
+                resault = None
+            try:
+                if category_id:
+                    items = items.filter(category_id=category_id)
+            except:
+                items = None
 
             if query:
-                items = items.filter(Q(name=query) | Q(description=query))
+                try:
+                    items = items.filter(Q(name__icontains=query) | Q(description__icontains=query))
+                except:
+                    items = None
 
             return render(request, 'index.html', {
                 "instockproducts": items,
