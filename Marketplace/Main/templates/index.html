@@ -1,16 +1,33 @@
 {% extends 'base.html' %}
+{% load static %}
+{% block link %}
+<link rel="stylesheet" type="text/css" href="{% static 'index.css' %}">
+{% endblock %}
 
 {% block title %} Home {% endblock %}
 
 {% block content %}
 <br>
-<div class="container mt-0">
+<div class="container mt-3">
   <div class="row">
     <form method="post" action="{% url 'index' %}">
       {% csrf_token %}
       <input type="hidden" name="command" value="sort">
       <button class="btn btn-primary mb-2" type="submit">Sort</button>
     </form>
+    <div class="col-lg-3">
+      <form>
+        <div class="list-group">
+          {% for i in categories %}
+          <label class="container">{{ i.name }}
+            <input type="checkbox" name="category" value="{{ i.name }}">
+            <span class="checkmark"></span>
+          </label>
+          {% endfor %}
+          <button class="btn btn-primary mb-2" type="submit">Filter</button>
+        </div>
+      </form>
+    </div>
     <div class="col-lg-9">
       <div class="row">
         {% for i in instockproducts %}

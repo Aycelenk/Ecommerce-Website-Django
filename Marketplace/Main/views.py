@@ -42,11 +42,24 @@ def index(request):
         
     if request.user.is_staff == True and request.user.is_superuser == True:
         return redirect("logout")
+    
+    #instockproducts = InStockProduct.objects.all()
+    orderedproducts = OrderedProduct.objects.all()
+    displayedcategories = Category.objects.all()
+    selected_categories = request.GET.getlist("category")
+    category_ids = []
+    for category_name in selected_categories:
+        category = Category.objects.get(name=category_name)
+        category_ids.append(category.id)
+    if selected_categories:
+        instockproducts = InStockProduct.objects.filter(category__in=category_ids)
+    else:
+        instockproducts = InStockProduct.objects.all()
     data = {
-        "instockproducts": InStockProduct.objects.all(),
-        "orderedproducts": OrderedProduct.objects.all(),
+        "instockproducts": instockproducts,
+        "orderedproducts": orderedproducts,
         #"users": Users.objects.all()
-        "categories":Category.objects.all()
+        "categories":displayedcategories
     }
     return render(request,"index.html", data)
 
