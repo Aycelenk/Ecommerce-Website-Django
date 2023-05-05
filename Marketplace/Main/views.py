@@ -17,46 +17,64 @@ def index(request):
         command = request.POST.get("command")
         categories = Category.objects.all()
         if command == "search":
-            try:
-                searched_product = InStockProduct.objects.get(description__icontains=query)
-                category_id = searched_product.category_id
-                items = InStockProduct.objects.all()
-            except:
-                resault = None
-            try:
-                if category_id:
-                    items = items.filter(category_id=category_id)
-            except:
-                items = None
+            searched_product = InStockProduct.objects.get(name = query)
+            category_id = searched_product.category_id
+            items = InStockProduct.objects.all()
+
+            if category_id:
+                items = items.filter(category_id=category_id)
 
             if query:
-                try:
-                    items = items.filter(Q(name__icontains=query) | Q(description__icontains=query))
-                except:
-                    items = None
+                items = items.filter(Q(name=query) | Q(description=query))
 
             return render(request, 'index.html', {
                 "instockproducts": items,
-                "categories": categories
+                "categories":categories
             })
         else:
-            all_products = InStockProduct.objects.all()
-            sorted_products = sorted(all_products, key=lambda x: x.price, reverse=True)
-            messages.success(request, "Items sorted via price in descending order successfully")
-            return render(request, 'index.html', {
-                "instockproducts": sorted_products,
-                "categories": categories
-            })
-
+            order = request.POST.get("order")
+            if order == "descending":
+                all_products = InStockProduct.objects.all()
+                sorted_products = sorted(all_products,key = lambda x:x.price,reverse=True)
+                messages.success(request, "Items sorted via price in descending order successfully")
+                return render(request, 'index.html', {
+                    "instockproducts": sorted_products,
+                    "categories":categories
+                })
+            else:
+                all_products = InStockProduct.objects.all()
+                sorted_products = sorted(all_products,key = lambda x:x.price,reverse=False)
+                messages.success(request, "Items sorted via price in ascending order successfully")
+                return render(request, 'index.html', {
+                    "instockproducts": sorted_products,
+                    "categories":categories
+                })
+        
     if request.user.is_staff == True and request.user.is_superuser == True:
         return redirect("logout")
+    
+    #instockproducts = InStockProduct.objects.all()
+    orderedproducts = OrderedProduct.objects.all()
+    displayedcategories = Category.objects.all()
+    selected_categories = request.GET.getlist("category")
+    category_ids = []
+    for category_name in selected_categories:
+        category = Category.objects.get(name=category_name)
+        category_ids.append(category.id)
+    if selected_categories:
+        instockproducts = InStockProduct.objects.filter(category__in=category_ids)
+    else:
+        instockproducts = InStockProduct.objects.all()
+    if not instockproducts:
+        messages.success(request, "No products found")
     data = {
-        "instockproducts": InStockProduct.objects.all(),
-        "orderedproducts": OrderedProduct.objects.all(),
-        # "users": Users.objects.all()
-        "categories": Category.objects.all()
+        "instockproducts": instockproducts,
+        "orderedproducts": orderedproducts,
+        #"users": Users.objects.all()
+        "categories":displayedcategories
     }
-    return render(request, "index.html", data)
+    return render(request,"index.html", data)
+
 
 def login(request):
     next_url = request.GET.get('next')
