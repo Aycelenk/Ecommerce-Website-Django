@@ -19,11 +19,13 @@ def index(request):
         #sad
         if command == "search":
             try:
-                searched_product = InStockProduct.objects.get(description__icontains=query)
-                category_id = searched_product.category_id
+                searched_products = InStockProduct.objects.filter(
+                    Q(name__icontains=query) | Q(description__icontains=query))
+                category_id = searched_products.first().category_id
                 items = InStockProduct.objects.all()
             except:
-                resault = None
+                searched_products = None
+
             try:
                 if category_id:
                     items = items.filter(category_id=category_id)
@@ -35,7 +37,6 @@ def index(request):
                     items = items.filter(Q(name__icontains=query) | Q(description__icontains=query))
                 except:
                     items = None
-
             return render(request, 'index.html', {
                 "instockproducts": items,
                 "categories":categories
