@@ -55,6 +55,8 @@ def index(request):
         instockproducts = InStockProduct.objects.filter(category__in=category_ids)
     else:
         instockproducts = InStockProduct.objects.all()
+    if not instockproducts:
+        messages.success(request, "No products found")
     data = {
         "instockproducts": instockproducts,
         "orderedproducts": orderedproducts,
