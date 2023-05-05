@@ -26,7 +26,7 @@
       <form>
         <div class="list-group">
           {% for i in categories %}
-          <label class="container">{{ i.name }}
+          <label class="container" id="category-container">{{ i.name }}
             <input type="checkbox" name="category" value="{{ i.name }}">
             <span class="checkmark"></span>
           </label>
