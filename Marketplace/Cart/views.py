@@ -158,8 +158,7 @@ def buy(request):
         product = get_object_or_404(InStockProduct,pk = product_id)
         user = request.user
 
-
-        lst = [str(product), str(record_count), str(product.price)]
+        lst = [str(product), str(quantity), str(product.price)]
         #create_pdf(" to me ", lst, "cs308shopping@gmail.com")
         #create_pdf(str(user), lst, str(user.email))
 
