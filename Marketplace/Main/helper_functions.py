@@ -2,6 +2,7 @@ from Product.models import InStockProduct,Users
 from Cart.models import Cart
 from django.shortcuts import get_object_or_404
 
+
 def check_anonymous_cart_products(request):
     anon_user = None
     if Users.objects.filter(username = "Anonymous User").exists():
@@ -42,3 +43,4 @@ def total_price(cart_items):
         price = item.quantity * product.price
         total += price
     return total
+
