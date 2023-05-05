@@ -1,3 +1,9 @@
+.card-img-top {
+    max-width: 100%;
+    max-height: 15vw;
+    object-fit: contain;
+}
+
 /* Customize the label (the container) */
 label#category-container.container {
     display: block;
