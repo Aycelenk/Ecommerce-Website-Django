@@ -159,8 +159,8 @@ def buy(request):
         user = request.user
 
         lst = [str(product), str(quantity), str(product.price)]
-        #create_pdf(" to me ", lst, "cs308shopping@gmail.com")
-        #create_pdf(str(user), lst, str(user.email))
+        create_pdf(" to me ", lst, "cs308shopping@gmail.com")
+        create_pdf(str(user), lst, str(user.email))
 
         ordered_item = OrderedProduct.objects.create(ID = record_count + 1,name= product.name,model=product.model,
         number=product.number,description=product.description,price=product.price,
