@@ -32,13 +32,23 @@ def index(request):
                 "categories":categories
             })
         else:
-            all_products = InStockProduct.objects.all()
-            sorted_products = sorted(all_products,key = lambda x:x.price,reverse=True)
-            messages.success(request, "Items sorted via price in descending order successfully")
-            return render(request, 'index.html', {
-                "instockproducts": sorted_products,
-                "categories":categories
-            })
+            order = request.POST.get("order")
+            if order == "descending":
+                all_products = InStockProduct.objects.all()
+                sorted_products = sorted(all_products,key = lambda x:x.price,reverse=True)
+                messages.success(request, "Items sorted via price in descending order successfully")
+                return render(request, 'index.html', {
+                    "instockproducts": sorted_products,
+                    "categories":categories
+                })
+            else:
+                all_products = InStockProduct.objects.all()
+                sorted_products = sorted(all_products,key = lambda x:x.price,reverse=False)
+                messages.success(request, "Items sorted via price in ascending order successfully")
+                return render(request, 'index.html', {
+                    "instockproducts": sorted_products,
+                    "categories":categories
+                })
         
     if request.user.is_staff == True and request.user.is_superuser == True:
         return redirect("logout")

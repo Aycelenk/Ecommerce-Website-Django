@@ -13,7 +13,14 @@
     <form method="post" action="{% url 'index' %}">
       {% csrf_token %}
       <input type="hidden" name="command" value="sort">
-      <button class="btn btn-primary mb-2" type="submit">Sort</button>
+      <input type="hidden" name="order" value="descending">
+      <button class="btn btn-primary mb-2" type="submit">Sort By Price(Descending)</button>
+    </form>
+    <form method="post" action="{% url 'index' %}">
+      {% csrf_token %}
+      <input type="hidden" name="command" value="sort">
+      <input type="hidden" name="order" value="ascending">
+      <button class="btn btn-primary mb-2" type="submit">Sort By Price(Ascending)</button>
     </form>
     <div class="col-lg-3">
       <form>

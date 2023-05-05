@@ -17,7 +17,7 @@
                 <div class="cart_container">
                     <div class="cart_items">
                         <br>
-                        {{product.ID}}
+                        {% for product in products %}
                         <ul class="cart_list">
                             <li class="cart_item clearfix">
                                 <div class="cart_item_info d-flex flex-md-row flex-column justify-content-between">
@@ -56,6 +56,7 @@
                                 </div>
                             </li>
                         </ul>
+                        {% endfor %}
                     </div>
                 </div>
             </div>
