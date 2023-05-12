@@ -138,3 +138,7 @@ class Comment(models.Model):
     stars = models.IntegerField()
     date_added = models.DateTimeField(auto_now_add=True)
     approved = models.BooleanField('Approved', default=False)
+
+    def __str__(self):
+        return self.product
+    
