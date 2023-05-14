@@ -4,14 +4,16 @@ from Main.helper_functions import check_anonymous_cart_products,get_products_fro
 from Product.models import InStockProduct,OrderedProduct,Users
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
+from django.core import serializers
 # Create your views here.
-
+import json
 from fpdf import FPDF
 import smtplib
 from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
 from email.mime.base import MIMEBase
 from email import encoders
+
 
 def create_pdf(name,items,email):
     class PDF(FPDF):
@@ -111,6 +113,7 @@ def cart(request):
             messages.success(request,f"Item deleted succesfully")
             return redirect("cart")
         else:
+            # add a product to the cart
             record_count = Cart.objects.count()
             if record_count != 0:
                 if Cart.objects.filter(product_id = product_id).exists():
@@ -125,9 +128,11 @@ def cart(request):
                 messages.error(request,f"This item is out of stock. Cannot add this item")
                 return redirect('detail',pk=product_id)
             if request.user.is_authenticated:
+                # a logged in user adds an item to the cart
                 cart_item = Cart.objects.create(product= product,user= request.user,quantity = quantity)
                 cart_item.save()
             else:
+                # Anonymous user adds an item to the cart
                 if Users.objects.filter(username = "Anonymous User").exists():
                     anon_user = Users.objects.get(username = "Anonymous User")
                 else:
@@ -135,7 +140,8 @@ def cart(request):
                 cart_item = Cart.objects.create(product= product,user = anon_user,quantity = quantity)
                 cart_item.save()
     cart_items = Cart.objects.all()
-    products = get_products_from_cart_object(cart_items)
+    products_dict = get_products_from_cart_object(cart_items)
+    products = list(products_dict.keys())
     for ind,p in enumerate(products):
         p.quantity = (cart_items[ind].quantity)
         p.save()
@@ -152,24 +158,46 @@ def cart(request):
 def buy(request):
     if request.method == "POST":
         check_anonymous_cart_products(request)
-        product_id = request.POST.get("product_id")
-        quantity = int(request.POST.get("quantity"))
-        record_count = OrderedProduct.objects.count()
-        product = get_object_or_404(InStockProduct,pk = product_id)
-        user = request.user
+        command = request.POST.get("command")
+        if command == "buy_all":
+            #Buy all items in the cart
+            cart_items = Cart.objects.all()
+            products = get_products_from_cart_object(cart_items)
+            #the products above is a dict with product as key and its quantity as value
+            user = request.user
+            for product in products:
+                record_count = OrderedProduct.objects.count()
+                quantity = products[product]
+                ordered_item = OrderedProduct.objects.create(ID = record_count + 1,name= product.name,model=product.model,
+                number=product.number,description=product.description,price=product.price,
+                warranty_status=product.warranty_status,distributor_info=product.distributor_info,
+                order_number=str(record_count + 1),delivery_address = "",recipient=user,quantity= quantity)
+                ordered_item.save()
+                Cart.objects.get(product_id = product.ID).delete()
+                product.quantity_in_stocks -= quantity
+                product.save()
+            messages.success(request,f"Products are bought successfully.You can check the delivery process in delivery tab")
+            return render(request,"buy.html",{"products":products})
+        else:
+            #Buy a single item from the cart
+            product_id = request.POST.get("product_id")
+            quantity = int(request.POST.get("quantity"))
+            record_count = OrderedProduct.objects.count()
+            product = get_object_or_404(InStockProduct,pk = product_id)
+            user = request.user
 
-        lst = [str(product), str(quantity), str(product.price)]
-        create_pdf(" to me ", lst, "cs308shopping@gmail.com")
-        create_pdf(str(user), lst, str(user.email))
+            # lst = [str(product), str(quantity), str(product.price)]
+            # create_pdf(" to me ", lst, "cs308shopping@gmail.com")
+            # create_pdf(str(user), lst, str(user.email))
 
-        ordered_item = OrderedProduct.objects.create(ID = record_count + 1,name= product.name,model=product.model,
-        number=product.number,description=product.description,price=product.price,
-        warranty_status=product.warranty_status,distributor_info=product.distributor_info,
-        order_number=str(record_count + 1),delivery_address = "",recipient=user,quantity= quantity)
-        ordered_item.save()
-        Cart.objects.get(product_id = product_id).delete()
-        messages.success(request,f"Product is bought successfully.You can check the delivery process in delivery tab")
-        product.quantity_in_stocks -= quantity
-        product.save()
-        return render(request,"buy.html",{"product":product})
+            ordered_item = OrderedProduct.objects.create(ID = record_count + 1,name= product.name,model=product.model,
+            number=product.number,description=product.description,price=product.price,
+            warranty_status=product.warranty_status,distributor_info=product.distributor_info,
+            order_number=str(record_count + 1),delivery_address = "",recipient=user,quantity= quantity)
+            ordered_item.save()
+            Cart.objects.get(product_id = product_id).delete()
+            messages.success(request,f"Product is bought successfully.You can check the delivery process in delivery tab")
+            product.quantity_in_stocks -= quantity
+            product.save()
+            return render(request,"buy.html",{"product":product})
 

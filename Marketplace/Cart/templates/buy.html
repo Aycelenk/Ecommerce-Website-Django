@@ -1,9 +1,10 @@
 {% extends 'base.html' %}
 
 {% block content %}
-<p>
-    Your item {{product.name}} has been bought
-</p>
+    {% for product in products %}
+    <p>Your item {{product.name}} has been bought</p>
+    {% endfor %}
+
 <a href="{% url 'delivery' %}">Click Here to see your delivery status</a>
 <!--
 <h1>PDF Example</h1>
