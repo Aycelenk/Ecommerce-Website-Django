@@ -1,5 +1,6 @@
 {% extends 'base.html' %}
 {% load static %}
+{% load cart_filter %}
 {% block link %}
 <link rel="stylesheet" type="text/css" href="{% static 'cart.css' %}">
 {% endblock %}
@@ -38,7 +39,7 @@
                                     </div>
                                     <div class="cart_item_total cart_info_col">
                                         <div class="cart_item_title">Total</div>
-                                        <div class="cart_item_text">{{total_price}}</div>
+                                        <div class="cart_item_text">{{ prices|get_item:product }}</div>
                                     </div>
                                     <div class="cart_buttons justify-content-between">
                                         <form method="post" action="{% url 'buy' %}">
@@ -66,6 +67,13 @@
                             <div class="order_total_title">Order Total:</div>
                             <div class="order_total_amount">{{total_price}}</div>
                         </div>
+                    </div>
+                    <div>
+                        <form method="post" class="cart_buttons justify-content-between" action="{% url 'buy' %}">
+                            {% csrf_token %}
+                            <input type="hidden" name="command" value="buy_all">
+                            <button class="btn btn-primary" type="submit">Buy All</button>
+                        </form>
                     </div>
                     {% else %}
                     <p>There are no items in your cart <a href="{% url 'index' %}"> Move to Home </a></p>
