@@ -1,0 +1,17 @@
+{% extends 'base.html' %}
+
+
+{% block content %}
+
+<h1>Credit Card Info</h1>
+<P>enter credit card info</p>
+
+<form method="post" class="cart_buttons justify-content-between" action="{% url 'buy' %}">
+    {% csrf_token %}
+    <input type="hidden" name="command" value="buy_all">
+    <button class="btn btn-primary" type="submit">buy all</button>
+</form>
+
+
+
+{% endblock %}

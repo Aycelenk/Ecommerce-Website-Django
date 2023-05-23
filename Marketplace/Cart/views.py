@@ -200,4 +200,8 @@ def buy(request):
             product.quantity_in_stocks -= quantity
             product.save()
             return render(request,"buy.html",{"product":product})
+        
 
+def card_info(request):
+
+    return render(request,"card_info.html")
