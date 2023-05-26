@@ -4,13 +4,13 @@
 <link rel="stylesheet" type="text/css" href="{% static 'cart.css' %}">
 {% endblock %}
 
-{% block title %} Deliveries {% endblock %}
+{% block title %} Purchase History {% endblock %}
 
 {% block content %}
 <div class="cart_section">
     {% if request.user.is_authenticated %}
         {% if products|length == 0  %}
-        <h5 class="alert-heading col-lg-10"> There are no deliveries</h5>
+        <h5 class="alert-heading col-lg-10"> There are no purchases</h5>
         {% else %}
         <div class="container-fluid">
             <div class="row">
@@ -30,10 +30,6 @@
                                             <div class="cart_item_title">User</div>
                                             <div class="cart_item_text">{{user}}</div>
                                         </div>
-                                        <div class="cart_item_quantity cart_info_col">
-                                            <div class="cart_item_title">Quantity</div>
-                                            <div class="cart_item_text">{{product.quantity}}</div>
-                                        </div>
                                         <div class="cart_item_price cart_info_col">
                                             <div class="cart_item_title">Price</div>
                                             <div class="cart_item_text">{{product.price}}</div>
@@ -50,16 +46,12 @@
                                             <div class="cart_item_title">Distributor Info</div>
                                             <div class="cart_item_text">{{product.distributor_info}}</div>
                                         </div>
-                                        <div class="cart_item_total cart_info_col">
-                                            <div class="cart_item_title">Status</div>
-                                            <div class="cart_item_text">{{product.order_process_status}}</div>
-                                        </div>
                                         
-                                        <form method="post" class="justify-content-center" action="{% url 'delivery' %}">
+                                        <form method="post" class="justify-content-center" action="{% url 'purchased_items' %}">
                                             {% csrf_token %}
                                             <input type="hidden" name="command" value="delete">
                                             <input type="hidden" name="product_id" value="{{product.ID}}">
-                                            <button class="btn btn-danger" type="submit">Cancel</button>
+                                            <button class="btn btn-danger" type="submit">Return</button>
                                         </form>
 
                                     </div>

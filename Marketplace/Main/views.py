@@ -1,5 +1,6 @@
 from django.shortcuts import render,redirect,get_object_or_404
 from django.http import HttpResponse
+from Cart.models import PurchaseHistory
 from Product.models import InStockProduct, OrderedProduct,Users,Category
 from .forms import LoginForm,SignupForm
 from .helper_functions import check_anonymous_cart_products
@@ -7,6 +8,7 @@ from django.contrib.auth import authenticate,logout
 from django.contrib.auth import login as auth_login
 from django.contrib import messages
 from django.db.models import Q
+from django.contrib.auth.decorators import login_required
 # Create your views here.
 
 def index(request):
@@ -127,13 +129,29 @@ def signup(request):
 def logout_view(request):
     logout(request)
     return redirect("/")
-
-    
+   
 def delivery(request):
     if request.method == "POST":
         command = request.POST.get("command")
         product_id = request.POST.get("product_id")
         if command == "delete":
             OrderedProduct.objects.get(ID = product_id).delete()
-    ordered_products = OrderedProduct.objects.all()
-    return render(request,"delivery.html",{"products":ordered_products})
+    if request.user.is_authenticated:
+        ordered_products = OrderedProduct.objects.filter(recipient = request.user)
+        #ordered_products = OrderedProduct.objects.all()
+        return render(request,"delivery.html",{"products":ordered_products})
+    else:
+        products = []
+        return render(request,"delivery.html",{"products":products})
+
+def purchased(request):
+    if request.user.is_authenticated:
+        purchased_history = PurchaseHistory.objects.filter(user = request.user)
+        purchased_products = []
+        for history in purchased_history:
+            product = history.product
+            purchased_products.append(product)       
+        return render(request,"purchased.html",{"products":purchased_products})
+    else:
+        products = []
+        return render(request,"purchased.html",{"products":products})

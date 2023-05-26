@@ -1,5 +1,5 @@
 from django.shortcuts import render,redirect,get_object_or_404
-from .models import Cart
+from .models import Cart,PurchaseHistory
 from Main.helper_functions import check_anonymous_cart_products,get_products_from_cart_object,total_price,price_quantity
 from Product.models import InStockProduct,OrderedProduct,Users
 from django.contrib.auth.decorators import login_required
@@ -176,6 +176,8 @@ def buy(request):
                 Cart.objects.get(product_id = product.ID).delete()
                 product.quantity_in_stocks -= quantity
                 product.save()
+                purchased_item = PurchaseHistory.objects.create(product = product,user=user)
+                purchased_item.save()
             messages.success(request,f"Products are bought successfully.You can check the delivery process in delivery tab")
             return render(request,"buy.html",{"products":products})
         else:
@@ -199,6 +201,8 @@ def buy(request):
             messages.success(request,f"Product is bought successfully.You can check the delivery process in delivery tab")
             product.quantity_in_stocks -= quantity
             product.save()
+            purchased_item = PurchaseHistory.objects.create(product = product,user=user)
+            purchased_item.save()
             return render(request,"buy.html",{"product":product})
         
 
