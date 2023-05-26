@@ -55,11 +55,21 @@
                         <label class="inline-block mb-2">Phone</label>
                         <input name="phone" type="phone" >
                     </div>
-                    <form method="post" class="cart_buttons justify-content-between" action="{% url 'buy' %}">
-                        {% csrf_token %}
-                        <input type="hidden" name="command" value="buy_all">
-                        <button class="btn btn-primary", style="margin-right:1100px;" type="submit">Complete Purchase</button>
-                    </form>
+                    {% if product_id and quantity %}
+                        <form method="post" class="cart_buttons justify-content-between" action="{% url 'buy' %}">
+                            {% csrf_token %}
+                            <input type="hidden" name="product_id" value="{{product_id}}">
+                            <input type="hidden" name="quantity" value="{{quantity}}">
+                            <button class="btn btn-primary", style="margin-right:1100px;" type="submit">Complete Purchase</button>
+                        </form>
+                    {% else %}
+                        <form method="post" class="cart_buttons justify-content-between" action="{% url 'buy' %}">
+                            {% csrf_token %}
+                            <input type="hidden" name="command" value="buy_all">
+                            <button class="btn btn-primary", style="margin-right:1100px;" type="submit">Complete Purchase</button>
+                        </form>
+                    {% endif %}
+
                 </div>
 
                 

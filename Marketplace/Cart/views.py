@@ -202,6 +202,14 @@ def buy(request):
             return render(request,"buy.html",{"product":product})
         
 
+@login_required
 def card_info(request):
-
-    return render(request,"card_info.html")
+    if bool(request.POST):
+        #request.post is not empty
+        #client buys a single item
+        product_id = request.POST.get("product_id")
+        quantity = int(request.POST.get("quantity"))
+        return render(request,"card_info.html",{"product_id":product_id,"quantity":quantity})
+    else:
+        #clients buys all the cart
+        return render(request,"card_info.html")
