@@ -1,5 +1,5 @@
 from django.shortcuts import render,redirect,get_object_or_404
-from .models import Cart
+from .models import Cart,PurchaseHistory
 from Main.helper_functions import check_anonymous_cart_products,get_products_from_cart_object,total_price,price_quantity
 from Product.models import InStockProduct,OrderedProduct,Users
 from django.contrib.auth.decorators import login_required
@@ -166,23 +166,27 @@ def buy(request):
             #the products above is a dict with product as key and its quantity as value
             user = request.user
             for product in products:
-                record_count = OrderedProduct.objects.count()
+                record_count_o = OrderedProduct.objects.count()
+                record_count_p = PurchaseHistory.objects.count()
                 quantity = products[product]
-                ordered_item = OrderedProduct.objects.create(ID = record_count + 1,name= product.name,model=product.model,
+                ordered_item = OrderedProduct.objects.create(ID = record_count_o + 1,name= product.name,model=product.model,
                 number=product.number,description=product.description,price=product.price,
                 warranty_status=product.warranty_status,distributor_info=product.distributor_info,
-                order_number=str(record_count + 1),delivery_address = "",recipient=user,quantity= quantity)
+                order_number=str(record_count_o + 1),delivery_address = "",recipient=user,quantity= quantity)
                 ordered_item.save()
                 Cart.objects.get(product_id = product.ID).delete()
                 product.quantity_in_stocks -= quantity
                 product.save()
+                purchased_item = PurchaseHistory.objects.create(ID = record_count_p + 1,product = product,user=user)
+                purchased_item.save()
             messages.success(request,f"Products are bought successfully.You can check the delivery process in delivery tab")
             return render(request,"buy.html",{"products":products})
         else:
             #Buy a single item from the cart
             product_id = request.POST.get("product_id")
             quantity = int(request.POST.get("quantity"))
-            record_count = OrderedProduct.objects.count()
+            record_count_o = OrderedProduct.objects.count()
+            record_count_p = PurchaseHistory.objects.count()
             product = get_object_or_404(InStockProduct,pk = product_id)
             user = request.user
 
@@ -190,15 +194,17 @@ def buy(request):
             # create_pdf(" to me ", lst, "cs308shopping@gmail.com")
             # create_pdf(str(user), lst, str(user.email))
 
-            ordered_item = OrderedProduct.objects.create(ID = record_count + 1,name= product.name,model=product.model,
+            ordered_item = OrderedProduct.objects.create(ID = record_count_o + 1,name= product.name,model=product.model,
             number=product.number,description=product.description,price=product.price,
             warranty_status=product.warranty_status,distributor_info=product.distributor_info,
-            order_number=str(record_count + 1),delivery_address = "",recipient=user,quantity= quantity)
+            order_number=str(record_count_o + 1),delivery_address = "",recipient=user,quantity= quantity)
             ordered_item.save()
             Cart.objects.get(product_id = product_id).delete()
             messages.success(request,f"Product is bought successfully.You can check the delivery process in delivery tab")
             product.quantity_in_stocks -= quantity
             product.save()
+            purchased_item = PurchaseHistory.objects.create(ID = record_count_p + 1,product = product,user=user)
+            purchased_item.save()
             return render(request,"buy.html",{"product":product})
         
 
