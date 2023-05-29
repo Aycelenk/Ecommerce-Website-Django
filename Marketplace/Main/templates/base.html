@@ -28,7 +28,7 @@
                         <a class="nav-link active" aria-current="page" href="{% url 'index' %}">Home</a>
                     </li>
                 </ul>
-                <!--Ayçelen burdan yazacan-->
+                
                 <form method="post" class="d-flex justify-content-center" role="search" action="{% url 'index' %}">
                     {% csrf_token %}
                     <input class="form-control me-2" type="search" placeholder="Search" aria-label="Search"
@@ -57,6 +57,11 @@
                     <li class="nav-item">
                         <a href="{% url 'delivery' %}" class="btn btn-primary shadow-0"> <i
                                 class="me-1 fa fa-globe"></i> Deliveries
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="{% url 'purchased_items' %}" class="btn btn-primary shadow-0"> <i
+                                class="me-1 fa fa-book"></i> Purchased Items
                         </a>
                     </li>
                 </ul>
