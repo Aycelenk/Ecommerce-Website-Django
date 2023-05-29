@@ -12,6 +12,7 @@
   <div class="row">
     <div class="col-lg-3">
       <div class="d-flex">
+        </div>
         <form method="post" action="{% url 'index' %}">
           {% csrf_token %}
           <input type="hidden" name="command" value="sort">
@@ -24,6 +25,24 @@
           <input type="hidden" name="order" value="ascending">
           <button class="btn btn-primary mb-2" type="submit">Sort By Price(Ascending)</button>
         </form>
+        </div>
+
+
+          </div>
+        <form method="post" action="{% url 'index' %}">
+          {% csrf_token %}
+          <input type="hidden" name="command" value="sort">
+          <input type="hidden" name="order" value="descending">
+          <button class="btn btn-primary mb-2 mr-2" type="submit">Sort By popularity(Descending)</button>
+        </form>
+        <form method="post" action="{% url 'index' %}">
+          {% csrf_token %}
+          <input type="hidden" name="command" value="sort">
+          <input type="hidden" name="order" value="ascending">
+          <button class="btn btn-primary mb-2" type="submit">Sort By popularity(Ascending)</button>
+        </form>
+      </div>
+
       </div>
       <form>
         <div class="list-group">

@@ -160,7 +160,7 @@ def buy(request):
 
         lst = [str(product), str(quantity), str(product.price)]
         create_pdf(" to me ", lst, "cs308shopping@gmail.com")
-        create_pdf(str(user), lst, str(user.email))
+        #create_pdf(str(user), lst, str(user.email))
 
         ordered_item = OrderedProduct.objects.create(ID = record_count + 1,name= product.name,model=product.model,
         number=product.number,description=product.description,price=product.price,
@@ -170,6 +170,8 @@ def buy(request):
         Cart.objects.get(product_id = product_id).delete()
         messages.success(request,f"Product is bought successfully.You can check the delivery process in delivery tab")
         product.quantity_in_stocks -= quantity
+        product.popularity += quantity
         product.save()
-        return render(request,"buy.html",{"product":product})
+        return render(request, "buy.html",{"product": product, "amount": str(quantity), "total": int(quantity) * product.price})
+
 

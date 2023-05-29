@@ -109,6 +109,7 @@ class InStockProduct(models.Model):
     price = models.FloatField(default=0)
     warranty_status = models.CharField(max_length=100)
     distributor_info = models.TextField()
+    popularity = models.IntegerField()
 
     def __str__(self):
         return self.name
