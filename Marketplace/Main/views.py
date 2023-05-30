@@ -3,7 +3,7 @@ from django.http import HttpResponse
 from Cart.models import PurchaseHistory,Refund
 from Product.models import InStockProduct, OrderedProduct,Users,Category
 from .forms import LoginForm,SignupForm
-from .helper_functions import check_anonymous_cart_products, newPrice_calc
+from .helper_functions import check_anonymous_cart_products,newPrice_calc
 from django.contrib.auth import authenticate,logout
 from django.contrib.auth import login as auth_login
 from django.contrib import messages
@@ -66,7 +66,7 @@ def index(request):
         
     if request.user.is_staff == True and request.user.is_superuser == True:
         return redirect("logout")
-
+    
     #instockproducts = InStockProduct.objects.all()
     orderedproducts = OrderedProduct.objects.all()
     displayedcategories = Category.objects.all()
@@ -81,7 +81,6 @@ def index(request):
         instockproducts = InStockProduct.objects.all()
     if not instockproducts:
         messages.success(request, "No products found")
-
     data = {
         "instockproducts": instockproducts,
         "orderedproducts": orderedproducts,
@@ -154,13 +153,17 @@ def purchased(request):
         if command == "return":
             #create a refund request
             purchased_product = get_object_or_404(PurchaseHistory,pk=purchased_id)
-        
+            refund = Refund.objects.create(ID = Refund.objects.count() + 1,product = purchased_product.product,
+            user = purchased_product.user)
+            refund.save()
             if purchased_product.product.discount !=0:
                 refund = Refund.objects.create(ID = Refund.objects.count() + 1,product = purchased_product.product,
                 user = purchased_product.user)
                 refund.save()
                 purchased_product.refund_requested = True
                 purchased_product.save()
+            purchased_product.refund_requested = True
+            purchased_product.save()
             history = PurchaseHistory.objects.filter(user = request.user)
             return render(request,"purchased.html",{"products":history})
     else:
@@ -177,7 +180,6 @@ def purchased(request):
                         said_product.save()
                         #refund silinecek mi sor eğer silenecekse böyle kalsın
                         #yoksa başka bir şekilde
-                        refund.delete()
                     else:
                         continue 
             purchased_history = PurchaseHistory.objects.filter(user = request.user)
