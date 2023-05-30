@@ -32,16 +32,30 @@ def get_products_from_cart_object(cart_items):
 def price_quantity(cart_items):
     d = {}
     for item in cart_items:
-       product = item.product
-       price = item.quantity * product.price
-       d[product] = price 
+        product = item.product
+        if product.discount != 0:
+            d[product] = product.newPrice 
+        else:
+            price = item.quantity * product.price
+            d[product] = price 
     return d
     
 def total_price(cart_items):
     total = 0
     for item in cart_items:
         product = item.product
-        price = item.quantity * product.price
-        total += price
-    return total
+        if product.discount != 0:
 
+            total += product.newPrice
+        else:
+            price = item.quantity * product.price
+            total += price
+    return total
+def newPrice_calc(products):
+    for product in products:
+        if product.discount !=0:
+            product.newPrice = (product.price- ((product.price* product.discount)/100))
+            product.save()
+        else: 
+            product.nemPrice=0
+            product.save()

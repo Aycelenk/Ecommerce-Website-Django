@@ -27,10 +27,21 @@
                                 class="fa fa-shopping-basket fa-sm mx-1"></i>{{product.quantity_in_stocks}}</span>
                         <span class="text-success ms-2">In stock</span>
                     </div>
+                    {% if product.discount != 0 %}
+                        <div class="mb-3">
+                            <strike class="h7">{{product.price}} TL</strike>
+                        </div>
+                        <div class="mb-3">
+                            <span class="h5"> {{product.newPrice}}TL</span>
+                        </div>
 
-                    <div class="mb-3">
-                        <span class="h5">{{product.price}} TL</span>
-                    </div>
+                    {% else%}
+
+                        <div class="mb-3">
+                            <span class="h5">{{product.price}} TL</span>
+                        </div>
+
+                    {% endif %}
 
                     <p>
                         {{product.description}}
@@ -48,6 +59,12 @@
 
                         <dt class="col-3">Distributor info:</dt>
                         <dd class="col-9">{{product.distributor_info}}</dd>
+
+                        {% if product.discount != 0 %}
+                            <dt class="col-3">Discount:</dt>
+                            <dd class="col-9">%{{product.discount}}</dd>
+                        {% endif %}
+                    </div>
 
                     </div>
 
