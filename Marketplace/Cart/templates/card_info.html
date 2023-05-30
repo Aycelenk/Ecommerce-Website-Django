@@ -44,16 +44,23 @@
                 </div>
     
                 <div class="mb-6 p-6 bg-gray-100 rounded-xl">
-                    <h2 class="mb-5 uppercase text-lg">Contact information</h2>
-    
+                    <h2 class="mb-5 uppercase text-lg">Payment Information</h2>
                     <div class="mb-4">
-                        <label class="inline-block mb-2">Email</label>
-                        <input name="email" type="email"  value="{{ request.user.email }}">
+                        <label class="inline-block mb-2">Name on Card</label>
+                        <input name="name_on_cardr"   >
+                    </div>
+                    <div class="mb-4">
+                        <label class="inline-block mb-2">Card Number</label>
+                        <input name="card_number"   >
                     </div>
     
                     <div class="mb-4">
-                        <label class="inline-block mb-2">Phone</label>
-                        <input name="phone" type="phone" >
+                        <label class="inline-block mb-2">Expiration Date</label>
+                        <input name="expiration_date" placeholder = "(MM/YY)" >
+                    </div>
+                    <div class="mb-4">
+                        <label class="inline-block mb-2">CVV</label>
+                        <input name="cvv" >
                     </div>
                     {% if product_id and quantity %}
                         <form method="post" class="cart_buttons justify-content-between" action="{% url 'buy' %}">
