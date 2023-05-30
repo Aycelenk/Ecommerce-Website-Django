@@ -4,6 +4,7 @@ from django.conf import settings
 from django.core.mail import send_mail
 from django.contrib.auth.validators import UnicodeUsernameValidator
 from django.utils import timezone
+from django.core.validators import MaxValueValidator
 # Create your models here.
 class Category(models.Model):
     name = models.CharField(max_length=255)
@@ -107,6 +108,8 @@ class InStockProduct(models.Model):
     description = models.TextField()
     quantity_in_stocks = models.IntegerField()
     price = models.FloatField(default=0)
+    discount = models.IntegerField(validators=[MaxValueValidator(100)],default=0)
+    newPrice=models.IntegerField(default=0)
     warranty_status = models.CharField(max_length=100)
     distributor_info = models.TextField()
 

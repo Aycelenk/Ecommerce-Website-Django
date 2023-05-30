@@ -15,6 +15,8 @@ def detail(request,pk):
     comment = None
     comments = Comment.objects.all()
     #
+
+
     if request.method == 'POST':
         if "minus_button" in request.POST:
             current_quantity = request.POST.get("quantity_field")
@@ -38,4 +40,4 @@ def detail(request,pk):
             "product":product,
             "category":category,
             "comments":comments,
-            "quantity":quantity})
+            "quantity":quantity,})
