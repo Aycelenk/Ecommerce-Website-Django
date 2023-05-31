@@ -139,7 +139,7 @@ def cart(request):
                     anon_user = Users.objects.create_user(is_active = False,role = "Anonymous User")
                 cart_item = Cart.objects.create(product= product,user = anon_user,quantity = quantity)
                 cart_item.save()
-    cart_items = Cart.objects.all()
+    cart_items = Cart.objects.filter(user = request.user)
     products_dict = get_products_from_cart_object(cart_items)
     products = list(products_dict.keys())
     for ind,p in enumerate(products):

@@ -139,7 +139,7 @@ class Comment(models.Model):
     user = models.ForeignKey(Users, related_name='comments', on_delete=models.CASCADE)
     content = models.TextField(blank=True, null=True)
     stars = models.IntegerField()
-    date_added = models.DateTimeField(auto_now_add=True)
+    date_added = models.DateTimeField(default=timezone.now)
     approved = models.BooleanField('Approved', default=False)
 
     def __str__(self):

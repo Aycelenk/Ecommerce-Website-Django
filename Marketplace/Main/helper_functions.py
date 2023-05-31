@@ -1,7 +1,6 @@
-from Product.models import InStockProduct,Users
+from Product.models import Users
 from Cart.models import Cart
-from django.shortcuts import get_object_or_404
-
+from django.utils import timezone
 
 def check_anonymous_cart_products(request):
     anon_user = None
@@ -51,6 +50,7 @@ def total_price(cart_items):
             price = item.quantity * product.price
             total += price
     return total
+
 def newPrice_calc(products):
     for product in products:
         if product.discount !=0:
@@ -59,3 +59,12 @@ def newPrice_calc(products):
         else: 
             product.nemPrice=0
             product.save()
+
+def DaysRemain(products):
+    dic = {}
+    for product in products:
+        today_date = timezone.now()
+        product_date = product.date_added
+        difference = today_date - product_date
+        dic[product] = difference.days
+    return dic

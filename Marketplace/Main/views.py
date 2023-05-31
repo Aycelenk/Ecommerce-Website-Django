@@ -3,12 +3,12 @@ from django.http import HttpResponse
 from Cart.models import PurchaseHistory,Refund
 from Product.models import InStockProduct, OrderedProduct,Users,Category
 from .forms import LoginForm,SignupForm
-from .helper_functions import check_anonymous_cart_products,newPrice_calc
+from .helper_functions import check_anonymous_cart_products,newPrice_calc,DaysRemain
 from django.contrib.auth import authenticate,logout
 from django.contrib.auth import login as auth_login
 from django.contrib import messages
 from django.db.models import Q
-from django.contrib.auth.decorators import login_required
+from django.utils import timezone
 # Create your views here.
 
 def index(request):
@@ -181,9 +181,10 @@ def purchased(request):
                         #refund silinecek mi sor eğer silenecekse böyle kalsın
                         #yoksa başka bir şekilde
                     else:
-                        continue 
+                        continue
             purchased_history = PurchaseHistory.objects.filter(user = request.user)
-            return render(request,"purchased.html",{"products":purchased_history})
+            days_remain = DaysRemain(purchased_history)
+            return render(request,"purchased.html",{"products":purchased_history,"days":days_remain})
         else:
             products = []
             return render(request,"purchased.html",{"products":products})
