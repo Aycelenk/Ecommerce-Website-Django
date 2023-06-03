@@ -33,7 +33,7 @@ def price_quantity(cart_items):
     for item in cart_items:
         product = item.product
         if product.discount != 0:
-            d[product] = product.newPrice 
+            d[product] = product.newPrice * item.quantity
         else:
             price = item.quantity * product.price
             d[product] = price 
@@ -45,7 +45,7 @@ def total_price(cart_items):
         product = item.product
         if product.discount != 0:
 
-            total += product.newPrice
+            total += product.newPrice * item.quantity
         else:
             price = item.quantity * product.price
             total += price
