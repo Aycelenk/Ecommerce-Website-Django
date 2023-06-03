@@ -188,7 +188,8 @@ def purchased(request):
             purchased_product.refund_requested = True
             purchased_product.save()
             history = PurchaseHistory.objects.filter(user = request.user)
-            return render(request,"purchased.html",{"products":history})
+            days_remain = DaysRemain(history)
+            return render(request,"purchased.html",{"products":history,"days":days_remain})
     else:
         if request.user.is_authenticated:
             if Refund.objects.count() != 0:
