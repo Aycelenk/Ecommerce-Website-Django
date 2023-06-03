@@ -1,14 +1,15 @@
 from django.shortcuts import render,redirect,get_object_or_404
 from django.http import HttpResponse
 from Cart.models import PurchaseHistory,Refund
-from Product.models import InStockProduct, OrderedProduct,Users,Category
+from Product.models import InStockProduct, OrderedProduct,Category,Users
+from .models import Account
 from .forms import LoginForm,SignupForm
 from .helper_functions import check_anonymous_cart_products,newPrice_calc,DaysRemain
 from django.contrib.auth import authenticate,logout
 from django.contrib.auth import login as auth_login
 from django.contrib import messages
 from django.db.models import Q
-from django.utils import timezone
+from django.contrib.auth.decorators import login_required
 # Create your views here.
 
 def index(request):
@@ -89,6 +90,18 @@ def index(request):
     }
     return render(request,"index.html", data)
 
+@login_required
+def accounts(request):
+    if request.method == "POST":
+        entered_balance = int(request.POST.get("balance"))
+        accounts= Account.objects.filter(user = request.user)
+        account = accounts[0]
+        account.balance += entered_balance
+        account.save()
+        return render(request,"account.html",{"accounts":accounts})
+    else:
+        accounts = Account.objects.filter(user = request.user)
+        return render(request,"account.html",{"accounts":accounts})
 
 def login(request):
     next_url = request.GET.get('next')
@@ -101,6 +114,12 @@ def login(request):
             user = authenticate(request,username = username,password = password)
             if user is not None:
                 auth_login(request,user)
+                count = Account.objects.count()
+                if Account.objects.filter(user = request.user).exists():
+                    pass
+                else:
+                    account = Account.objects.create(ID = count + 1,user = user)
+                    account.save()
                 next_url = request.POST.get("next")
                 if next_url:
                     return redirect("cart")
@@ -120,6 +139,10 @@ def signup(request):
         form = SignupForm(request.POST)
         if form.is_valid():
             form.save()
+            count = Account.objects.count()
+            user = Users.objects.last()
+            account = Account.objects.create(ID = count + 1,user = user)
+            account.save()
             messages.success(request,f"Account created for {request.POST.get('username')}")
             return redirect("login")
         else:
