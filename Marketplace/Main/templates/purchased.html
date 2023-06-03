@@ -59,15 +59,6 @@
                                                 <div class="cart_item_title">Refund Status</div>
                                                 <div class="cart_item_text">Refund Requested</div>
                                             </div>
-                                            {% if days|get_item:product <= 30 %}
-                                            <form method="post" class="justify-content-center"
-                                                action="{% url 'purchased_items' %}">
-                                                {% csrf_token %}
-                                                <input type="hidden" name="command" value="return">
-                                                <input type="hidden" name="product_id" value="{{product.ID}}">
-                                                <button class="btn btn-danger" type="submit">Return</button>
-                                            </form>
-                                            {% endif %}
                                         {% elif product.refund_requested and product.refund_accepted %}
                                             <div class="cart_item_name cart_info_col">
                                                 <div class="cart_item_title">Name</div>
@@ -105,15 +96,6 @@
                                                 <div class="cart_item_text">Refund Accepted</div>
                                             </div>
 
-                                            {% if days|get_item:product <= 30 %}
-                                            <form method="post" class="justify-content-center"
-                                                action="{% url 'purchased_items' %}">
-                                                {% csrf_token %}
-                                                <input type="hidden" name="command" value="return">
-                                                <input type="hidden" name="product_id" value="{{product.ID}}">
-                                                <button class="btn btn-danger" type="submit">Return</button>
-                                            </form>
-                                            {% endif %}
                                         {% else %}
                                         <div class="cart_item_name cart_info_col">
                                             <div class="cart_item_title">Name</div>
@@ -159,6 +141,10 @@
                                                     <input type="hidden" name="product_id" value="{{product.ID}}">
                                                     <button class="btn btn-danger" type="submit">Return</button>
                                                 </form>
+                                            {% else %}
+                                            <div class="cart_item_total cart_info_col">
+                                                <div class="cart_item_text">Purchase date more than 30 days.Cannot refund!</div>
+                                            </div>
                                             {% endif %}
                                         {% endif %}
                                     </div>
