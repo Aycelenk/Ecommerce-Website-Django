@@ -180,9 +180,6 @@ def purchased(request):
             user = purchased_product.user)
             refund.save()
             if purchased_product.product.discount !=0:
-                refund = Refund.objects.create(ID = Refund.objects.count() + 1,product = purchased_product.product,
-                user = purchased_product.user)
-                refund.save()
                 purchased_product.refund_requested = True
                 purchased_product.save()
             purchased_product.refund_requested = True
@@ -192,20 +189,35 @@ def purchased(request):
             return render(request,"purchased.html",{"products":history,"days":days_remain})
     else:
         if request.user.is_authenticated:
+            it = 0
             if Refund.objects.count() != 0:
-                refunds = Refund.objects.all()
+                refunds = Refund.objects.filter(user = request.user)
                 for refund in refunds:
                     if refund.Approved == True:
                         said_product = refund.product
-                        purchased_item = PurchaseHistory.objects.get(product = said_product)
-                        purchased_item.refund_accepted = True
-                        purchased_item.save()
-                        said_product.quantity_in_stocks += 1
-                        said_product.save()
-                        #refund silinecek mi sor eğer silenecekse böyle kalsın
-                        #yoksa başka bir şekilde
+                        purchased_item = PurchaseHistory.objects.filter(product = said_product)
+                        purchased_item = purchased_item[it]
+                        if purchased_item.refund_accepted == True:
+                            pass
+                        else:
+                            purchased_item.refund_accepted = True
+                            purchased_item.save()
+                            said_product.quantity_in_stocks += 1
+                            said_product.save()
+                            said_accounts = Account.objects.filter(user = request.user)
+                            said_account = said_accounts[0]
+                            if said_product.discount != 0:
+                                #discountlu price geri dönecek
+                                said_account.balance += said_product.newPrice
+                                said_account.save()
+                            else:
+                                #normal price geri dönecek
+                                said_account.balance += said_product.price
+                                said_account.save()
                     else:
+                        it += 1
                         continue
+                    it += 1
             purchased_history = PurchaseHistory.objects.filter(user = request.user)
             days_remain = DaysRemain(purchased_history)
             return render(request,"purchased.html",{"products":purchased_history,"days":days_remain})

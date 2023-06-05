@@ -1,5 +1,6 @@
 from django.shortcuts import render,redirect,get_object_or_404
 from .models import Cart,PurchaseHistory
+from Main.models import Account
 from Main.helper_functions import check_anonymous_cart_products,get_products_from_cart_object,total_price,price_quantity
 from Product.models import InStockProduct,OrderedProduct,Users
 from django.contrib.auth.decorators import login_required
@@ -162,7 +163,7 @@ def buy(request):
         command = request.POST.get("command")
         if command == "buy_all":
             #Buy all items in the cart
-            cart_items = Cart.objects.all()
+            cart_items = Cart.objects.filter(user = request.user)
             products = get_products_from_cart_object(cart_items)
             #the products above is a dict with product as key and its quantity as value
             user = request.user
@@ -197,13 +198,13 @@ def buy(request):
             record_count_p = PurchaseHistory.objects.count()
             product = get_object_or_404(InStockProduct,pk = product_id)
             user = request.user
-
             # lst = [str(product), str(quantity), str(product.price)]
             # create_pdf(" to me ", lst, "cs308shopping@gmail.com")
             # create_pdf(str(user), lst, str(user.email))
 
             if product.discount != 0:
-               
+
+                
                 ordered_item = OrderedProduct.objects.create(ID = record_count_o + 1,name= product.name,model=product.model,
                 number=product.number,description=product.description,price=product.newPrice,
                 warranty_status=product.warranty_status,distributor_info=product.distributor_info,
@@ -226,11 +227,24 @@ def buy(request):
 
 @login_required
 def card_info(request):
+    accounts = Account.objects.filter(user = request.user)
+    account = accounts[0]
     if bool(request.POST):
         #request.post is not empty
         #client buys a single item
         product_id = request.POST.get("product_id")
         quantity = int(request.POST.get("quantity"))
+        said_product = get_object_or_404(InStockProduct,pk = product_id)
+        if said_product.discount != 0:
+            final_price = said_product.newPrice * quantity
+        else:
+            final_price = said_product.price * quantity
+        if account.balance - final_price < 0:
+            messages.error(request,f"You have not enough money in your balance to buy this item!")
+            return redirect('cart')
+        else:
+            account.balance = account.balance - final_price
+            account.save()
         return render(request,"card_info.html",{"product_id":product_id,"quantity":quantity})
     else:
         #clients buys all the cart
