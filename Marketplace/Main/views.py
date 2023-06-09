@@ -1,7 +1,7 @@
 from django.shortcuts import render,redirect,get_object_or_404
 from django.http import HttpResponse
 from Cart.models import PurchaseHistory,Refund
-from Product.models import InStockProduct, OrderedProduct,Category,Users
+from Product.models import InStockProduct, OrderedProduct,Category,Users,PurchasedProduct
 from .models import Account
 from .forms import LoginForm,SignupForm
 from .helper_functions import check_anonymous_cart_products,newPrice_calc,DaysRemain,checkDiscountChange
@@ -174,13 +174,13 @@ def delivery(request):
         product_id = request.POST.get("product_id")
         if command == "delete":
             said_ordered_product = OrderedProduct.objects.get(ID = product_id)
-            Instockproduct_id = said_ordered_product.InstockID
-            said_inst_product = InStockProduct.objects.get(ID = Instockproduct_id)
-            said_purchased_item = PurchaseHistory.objects.get(product = said_inst_product)
+            purchased_product_id = said_ordered_product.InstockID
+            said_purchased_product = PurchasedProduct.objects.get(ID = purchased_product_id)
+            said_purchased_item = PurchaseHistory.objects.get(product = said_purchased_product)
             OrderedProduct.objects.get(ID = product_id).delete()
-            said_inst_product.purchased = False
-            said_inst_product.save()
-            PurchaseHistory.objects.get(product = said_inst_product).delete()
+            said_purchased_product.purchased = False
+            said_purchased_product.save()
+            PurchaseHistory.objects.get(product = said_purchased_product).delete()
 
     if request.user.is_authenticated:
         ordered_products = OrderedProduct.objects.filter(recipient = request.user)
@@ -200,9 +200,6 @@ def purchased(request):
             refund = Refund.objects.create(ID = Refund.objects.count() + 1,product = purchased_product.product,
             user = purchased_product.user)
             refund.save()
-            if purchased_product.product.discount !=0:
-                purchased_product.refund_requested = True
-                purchased_product.save()
             purchased_product.refund_requested = True
             purchased_product.save()
             history = PurchaseHistory.objects.filter(user = request.user)
@@ -215,14 +212,16 @@ def purchased(request):
                 refunds = Refund.objects.filter(user = request.user)
                 for refund in refunds:
                     if refund.Approved == True:
-                        said_product = refund.product
-                        purchased_item = PurchaseHistory.objects.filter(product = said_product)
+                        said_purchased_product = refund.product
+                        said_product = InStockProduct.objects.get(name = said_purchased_product.name)
+                        purchased_item = PurchaseHistory.objects.filter(product = said_purchased_product)
                         purchased_item = purchased_item[it]
                         if purchased_item.refund_accepted == True:
                             pass
                         else:
                             purchased_item.refund_accepted = True
                             purchased_item.save()
+
                             said_product.quantity_in_stocks += 1
                             said_product.save()
                             said_accounts = Account.objects.filter(user = request.user)

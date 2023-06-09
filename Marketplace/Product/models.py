@@ -137,6 +137,23 @@ class OrderedProduct(models.Model):
 
     def __str__(self):
         return self.name
+    
+class PurchasedProduct(models.Model):
+
+    ID = models.IntegerField(primary_key=True)
+    name = models.CharField(max_length=100)
+    model = models.CharField(max_length=100)
+    number = models.IntegerField()
+    description = models.TextField()
+    price = models.FloatField(default=0)
+    warranty_status = models.CharField(max_length=100)
+    distributor_info = models.TextField()
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
+    quantity = models.IntegerField()
+    purchased_price = models.IntegerField(default=0)
+
+    def __str__(self):
+        return self.name
 
 class Comment(models.Model):
     product = models.ForeignKey(InStockProduct, related_name='comments' , on_delete=models.CASCADE)
