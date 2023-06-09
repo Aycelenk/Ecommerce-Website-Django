@@ -26,6 +26,18 @@ def get_products_from_cart_object(cart_items):
             product = item.product
             products[product] = item.quantity
         return products
+    
+def checkDiscountChange(product):
+    if product.discount != 0:
+        dis = (product.price- ((product.price* product.discount)/100))
+        if product.newPrice != dis:
+            #discount changed
+            return True
+        else:
+            #discount same
+            return False
+    else:
+        return False
 
 
 def price_quantity(cart_items):

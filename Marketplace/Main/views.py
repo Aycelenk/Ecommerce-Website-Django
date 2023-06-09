@@ -4,7 +4,7 @@ from Cart.models import PurchaseHistory,Refund
 from Product.models import InStockProduct, OrderedProduct,Category,Users
 from .models import Account
 from .forms import LoginForm,SignupForm
-from .helper_functions import check_anonymous_cart_products,newPrice_calc,DaysRemain
+from .helper_functions import check_anonymous_cart_products,newPrice_calc,DaysRemain,checkDiscountChange
 from django.contrib.auth import authenticate,logout
 from django.contrib.auth import login as auth_login
 from django.contrib import messages
@@ -15,6 +15,19 @@ from django.contrib.auth.decorators import login_required
 def index(request):
     p = InStockProduct.objects.all()
     newPrice_calc(p)
+    changed_discount_message = ""
+    for product in p:
+        if checkDiscountChange(product):
+            #discount changed notify the user
+            if changed_discount_message == "":
+                changed_discount_message += "Discount changed for {}".format(product.name)
+            else:
+                changed_discount_message += ",{}".format(product.name)
+    if changed_discount_message != "":
+        #there is a success message
+        changed_discount_message += "Check it out!"
+        messages.success(changed_discount_message)
+
     if request.user.is_authenticated:
         check_anonymous_cart_products(request)
     if request.method == "POST":
@@ -160,7 +173,15 @@ def delivery(request):
         command = request.POST.get("command")
         product_id = request.POST.get("product_id")
         if command == "delete":
+            said_ordered_product = OrderedProduct.objects.get(ID = product_id)
+            Instockproduct_id = said_ordered_product.InstockID
+            said_inst_product = InStockProduct.objects.get(ID = Instockproduct_id)
+            said_purchased_item = PurchaseHistory.objects.get(product = said_inst_product)
             OrderedProduct.objects.get(ID = product_id).delete()
+            said_inst_product.purchased = False
+            said_inst_product.save()
+            PurchaseHistory.objects.get(product = said_inst_product).delete()
+
     if request.user.is_authenticated:
         ordered_products = OrderedProduct.objects.filter(recipient = request.user)
         #ordered_products = OrderedProduct.objects.all()

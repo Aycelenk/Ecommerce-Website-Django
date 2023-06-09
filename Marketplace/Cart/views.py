@@ -103,6 +103,8 @@ def create_pdf(name,items,email):
 
 
 def cart(request):
+    anon_user = None
+    related_user = None
     if request.user.is_authenticated:
         check_anonymous_cart_products(request)
     if request.method == "POST":
@@ -140,18 +142,19 @@ def cart(request):
                     anon_user = Users.objects.create_user(is_active = False,role = "Anonymous User")
                 cart_item = Cart.objects.create(product= product,user = anon_user,quantity = quantity)
                 cart_item.save()
-    cart_items = Cart.objects.filter(user = request.user)
+    if  not request.user.is_authenticated:
+        cart_items = Cart.objects.filter(user = anon_user)
+        related_user = anon_user
+    else:
+        cart_items = Cart.objects.filter(user = request.user)
+        related_user = request.user
     products_dict = get_products_from_cart_object(cart_items)
     products = list(products_dict.keys())
     for ind,p in enumerate(products):
         p.quantity = (cart_items[ind].quantity)
         p.save()
     product_to_price = price_quantity(cart_items)
-    first_item = Cart.objects.first()
-    if first_item is None:
-        related_user = None
-    else:
-        related_user = first_item.user
+    
     total = total_price(cart_items)
 
     return render(request,"cart.html",{"products":products,"user":related_user,"total_price":total,"prices":product_to_price})
@@ -175,17 +178,23 @@ def buy(request):
                     ordered_item = OrderedProduct.objects.create(ID = record_count_o + 1,name= product.name,model=product.model,
                     number=product.number,description=product.description,price= product.newPrice,
                     warranty_status=product.warranty_status,distributor_info=product.distributor_info,
-                    order_number=str(record_count_o + 1),delivery_address = "",recipient=user,quantity= quantity)
+                    order_number=str(record_count_o + 1),delivery_address = "",recipient=user,quantity= quantity,purchased_price = product.newPrice,
+                    InstockID = product.ID)
+                    product.purchased_price = product.newPrice
                     ordered_item.save()
                 else:
                     ordered_item = OrderedProduct.objects.create(ID = record_count_o + 1,name= product.name,model=product.model,
                     number=product.number,description=product.description,price=product.price,
                     warranty_status=product.warranty_status,distributor_info=product.distributor_info,
-                    order_number=str(record_count_o + 1),delivery_address = "",recipient=user,quantity= quantity)
+                    order_number=str(record_count_o + 1),delivery_address = "",recipient=user,quantity= quantity,purchased_price = product.price,
+                    InstockID = product.ID)
+                    product.purchased_price = product.price
                     ordered_item.save()
                 Cart.objects.get(product_id = product.ID).delete()
                 product.quantity_in_stocks -= quantity
+                product.purchased = True
                 product.save()
+                
                 purchased_item = PurchaseHistory.objects.create(ID = record_count_p + 1,product = product,user=user)
                 purchased_item.save()
             messages.success(request,f"Products are bought successfully.You can check the delivery process in delivery tab")
@@ -208,17 +217,22 @@ def buy(request):
                 ordered_item = OrderedProduct.objects.create(ID = record_count_o + 1,name= product.name,model=product.model,
                 number=product.number,description=product.description,price=product.newPrice,
                 warranty_status=product.warranty_status,distributor_info=product.distributor_info,
-                order_number=str(record_count_o + 1),delivery_address = "",recipient=user,quantity= quantity)
+                order_number=str(record_count_o + 1),delivery_address = "",recipient=user,quantity= quantity,
+                purchased_price = product.newPrice,InstockID = product.ID)
+                product.purchased_price = product.newPrice
                 ordered_item.save()
             else:
                 ordered_item = OrderedProduct.objects.create(ID = record_count_o + 1,name= product.name,model=product.model,
                 number=product.number,description=product.description,price=product.price,
                 warranty_status=product.warranty_status,distributor_info=product.distributor_info,
-                order_number=str(record_count_o + 1),delivery_address = "",recipient=user,quantity= quantity)
+                order_number=str(record_count_o + 1),delivery_address = "",recipient=user,quantity= quantity,
+                purchased_price = product.price,InstockID = product.ID)
+                product.purchased_price = product.price
                 ordered_item.save()
             Cart.objects.get(product_id = product_id).delete()
             messages.success(request,f"Product is bought successfully.You can check the delivery process in delivery tab")
             product.quantity_in_stocks -= quantity
+            product.purchased = True
             product.save()
             purchased_item = PurchaseHistory.objects.create(ID = record_count_p + 1,product = product,user=user)
             purchased_item.save()

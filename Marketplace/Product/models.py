@@ -112,6 +112,8 @@ class InStockProduct(models.Model):
     newPrice=models.IntegerField(default=0)
     warranty_status = models.CharField(max_length=100)
     distributor_info = models.TextField()
+    purchased = models.BooleanField(default = False)
+    purchased_price = models.IntegerField(default=0)
 
     def __str__(self):
         return self.name
@@ -130,6 +132,8 @@ class OrderedProduct(models.Model):
     recipient = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
     order_process_status = models.CharField(max_length=100, default="processing")
     quantity = models.IntegerField()
+    purchased_price = models.IntegerField(default=0)
+    InstockID = models.IntegerField(default=0)
 
     def __str__(self):
         return self.name
