@@ -12,6 +12,7 @@
   <div class="row">
     <div class="col-lg-3">
       <div class="d-flex">
+        </div>
         <form method="post" action="{% url 'index' %}">
           {% csrf_token %}
           <input type="hidden" name="command" value="sort">
@@ -24,6 +25,24 @@
           <input type="hidden" name="order" value="ascending">
           <button class="btn btn-primary mb-2" type="submit">Sort By Price(Ascending)</button>
         </form>
+        </div>
+
+
+          </div>
+        <form method="post" action="{% url 'index' %}">
+          {% csrf_token %}
+          <input type="hidden" name="command" value="sort">
+          <input type="hidden" name="order" value="descending">
+          <button class="btn btn-primary mb-2 mr-2" type="submit">Sort By popularity(Descending)</button>
+        </form>
+        <form method="post" action="{% url 'index' %}">
+          {% csrf_token %}
+          <input type="hidden" name="command" value="sort">
+          <input type="hidden" name="order" value="ascending">
+          <button class="btn btn-primary mb-2" type="submit">Sort By popularity(Ascending)</button>
+        </form>
+      </div>
+
       </div>
       <form>
         <div class="list-group">
@@ -47,15 +66,7 @@
             </a>
             <div class="card-body">
               <h5 class="card-title">{{ i.name }}</h5>
-         
-              {% if i.discount != 0 %}
-              <h5> <strike class="text-muted">{{i.price}} TL</strike></h5>
-                
-              
-                <h4 class="text-muted">{{i.newPrice}} TL</h4>
-              {% else%}
-                <h4 class="text-muted">{{i.price}} TL</h4>
-              {% endif %}
+              <h4 class="text-muted">{{i.price}} TL</h4>
               <a href="{% url 'detail' i.ID %}" class="btn btn-danger">Details...</a>
             </div>
           </div>

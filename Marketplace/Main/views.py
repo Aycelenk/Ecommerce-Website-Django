@@ -12,6 +12,9 @@ from django.db.models import Q
 from django.contrib.auth.decorators import login_required
 # Create your views here.
 
+
+
+
 def index(request):
     p = InStockProduct.objects.all()
     newPrice_calc(p)
@@ -43,18 +46,23 @@ def index(request):
                 items = InStockProduct.objects.all()
             except:
                 searched_products = None
+                print("1")
 
             try:
                 if category_id:
                     items = items.filter(category_id=category_id)
             except:
                 items = None
+                print("2")
 
             if query:
                 try:
                     items = items.filter(Q(name__icontains=query) | Q(description__icontains=query))
                 except:
                     items = None
+                    print("3")
+                    messages.error(request, f"This item doesnt exist")
+                    #return redirect('detail', pk=query)
             return render(request, 'index.html', {
                 "instockproducts": items,
                 "categories":categories
@@ -76,6 +84,23 @@ def index(request):
                 return render(request, 'index.html', {
                     "instockproducts": sorted_products,
                     "categories":categories
+                })
+            order = request.POST.get("popularity")
+            if order == "descending":
+                all_products = InStockProduct.objects.all()
+                sorted_products = sorted(all_products, key=lambda x: x.popularity, reverse=True)
+                messages.success(request, "Items sorted via popularity in descending order successfully")
+                return render(request, 'index.html', {
+                    "instockproducts": sorted_products,
+                    "categories": categories
+                })
+            else:
+                all_products = InStockProduct.objects.all()
+                sorted_products = sorted(all_products, key=lambda x: x.popularity, reverse=False)
+                messages.success(request, "Items sorted via popularity in ascending order successfully")
+                return render(request, 'index.html', {
+                    "instockproducts": sorted_products,
+                    "categories": categories
                 })
         
     if request.user.is_staff == True and request.user.is_superuser == True:

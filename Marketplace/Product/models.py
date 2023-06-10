@@ -114,6 +114,7 @@ class InStockProduct(models.Model):
     distributor_info = models.TextField()
     purchased = models.BooleanField(default = False)
     purchased_price = models.IntegerField(default=0)
+    popularity = models.IntegerField(default=0)
 
     def __str__(self):
         return self.name
@@ -151,6 +152,15 @@ class PurchasedProduct(models.Model):
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
     quantity = models.IntegerField()
     purchased_price = models.IntegerField(default=0)
+
+    def __str__(self):
+        return self.name
+
+class Invoice(models.Model):
+
+    ID = models.IntegerField(primary_key=True)
+    name = models.CharField(max_length=100)
+    date =  models.DateTimeField()
 
     def __str__(self):
         return self.name

@@ -1,7 +1,7 @@
 from django import forms
 from django.contrib import admin
 
-from .models import Users,Category,OrderedProduct,InStockProduct,Comment,PurchasedProduct
+from .models import Users,Category,OrderedProduct,InStockProduct,Comment,PurchasedProduct,Invoice
 
 
 class ProductAdmin(admin.ModelAdmin):
@@ -14,3 +14,4 @@ admin.site.register(Users)
 admin.site.register(Category)
 admin.site.register(Comment)
 admin.site.register(PurchasedProduct)
+admin.site.register(Invoice)

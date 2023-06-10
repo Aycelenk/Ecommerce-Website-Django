@@ -2,10 +2,10 @@
 
 {% block content %}
     {% if product %}
-        <p>Your item {{product.name}}  has been bought</p>
+        <p>Your item {{product}}  has been bought</p>
     {% else %}
         {% for product in products %}
-        <p>Your item {{product.name}}  has been bought</p>
+        <p>Your item {{product}}  has been bought</p>
         {% endfor %}
     {% endif %}
 

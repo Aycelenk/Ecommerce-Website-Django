@@ -2,7 +2,7 @@ from django.shortcuts import render,redirect,get_object_or_404
 from .models import Cart,PurchaseHistory
 from Main.models import Account
 from Main.helper_functions import check_anonymous_cart_products,get_products_from_cart_object,total_price,price_quantity
-from Product.models import InStockProduct,OrderedProduct,Users,PurchasedProduct
+from Product.models import InStockProduct,OrderedProduct,Users,PurchasedProduct,Invoice
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from django.core import serializers
@@ -15,8 +15,24 @@ from email.mime.text import MIMEText
 from email.mime.base import MIMEBase
 from email import encoders
 
+import datetime
 
-def create_pdf(name,items,email):
+from django.shortcuts import render
+from io import BytesIO
+from django.http import HttpResponse
+from django.template.loader import get_template
+from django.views import View
+from xhtml2pdf import pisa
+
+import random
+import string
+
+def generate_random_string(length):
+    letters = string.ascii_letters
+    random_string = ''.join(random.choice(letters) for _ in range(length))
+    return random_string
+
+def create_pdf(name,items,email,random_string):
     class PDF(FPDF):
         def header(self):
             # Logo
@@ -64,7 +80,7 @@ def create_pdf(name,items,email):
     for i in range(len(items)//3):
         pdf.cell(0, 10, f'item: '+ items[i*3]+'     amount: '+ items[i*3+1] +'    price: '+items[i*3+2]+'', ln=1)
 
-    pdf.output('pdf_2.pdf')
+    pdf.output(random_string+'.pdf')
 
     print("*****************************************************************************")
     mail_content = '''Bizzi tercih etdiğiniz için teşşekür ederiz
@@ -171,6 +187,8 @@ def buy(request):
         check_anonymous_cart_products(request)
         command = request.POST.get("command")
         if command == "buy_all":
+            lst = []
+            lstofp = ""
             #Buy all items in the cart
             cart_items = Cart.objects.filter(user = request.user)
             products = get_products_from_cart_object(cart_items)
@@ -193,6 +211,8 @@ def buy(request):
                     warranty_status=ordered_item.warranty_status,distributor_info=ordered_item.distributor_info,
                     user=user,quantity= quantity,purchased_price = product.newPrice)
                     purchased.save()
+                    lst += [str(product), str(quantity), str(product.price)]
+                    lstofp += (str(product) +" ")
                     product.purchased_price = product.newPrice
                     ordered_item.save()
                 else:
@@ -207,18 +227,37 @@ def buy(request):
                     warranty_status=ordered_item.warranty_status,distributor_info=ordered_item.distributor_info,
                     user=user,quantity= quantity,purchased_price = product.newPrice)
                     purchased.save()
-
+                    lst += [str(product), str(quantity), str(product.price)]
+                    lstofp += (str(product) + " ")
                     product.purchased_price = product.price
                     ordered_item.save()
                 Cart.objects.get(product_id = product.ID).delete()
                 product.quantity_in_stocks -= quantity
+                product.popularity += quantity
                 product.purchased = True
                 product.save()
                 
                 purchased_item = PurchaseHistory.objects.create(ID = record_count_p + 1,product = purchased,user=user)
                 purchased_item.save()
             messages.success(request,f"Products are bought successfully.You can check the delivery process in delivery tab")
-            return render(request,"buy.html",{"products":products})
+
+
+
+
+            random_string = generate_random_string(20)
+
+
+            create_pdf(" to me ", lst, "cs308shopping@gmail.com", random_string)
+
+            random_int = random.randint(0, 100000000000)
+            current_datetime = datetime.datetime.now()
+
+            invoice = Invoice(ID=random_int, name=random_string, date=current_datetime)
+            print(invoice.name)
+            invoice.save()
+            print(lstofp)
+            in_pdf = "http://127.0.0.1:8000/" + random_string + ".pdf"
+            return render(request, "buy2.html", {"product": lstofp, "in_pdf": in_pdf})
         else:
             #Buy a single item from the cart
             product_id = request.POST.get("product_id")
@@ -228,8 +267,18 @@ def buy(request):
             record_count_purchased = PurchasedProduct.objects.count()
             product = get_object_or_404(InStockProduct,pk = product_id)
             user = request.user
-            # lst = [str(product), str(quantity), str(product.price)]
-            # create_pdf(" to me ", lst, "cs308shopping@gmail.com")
+
+            random_string = generate_random_string(20)
+
+            lst = [str(product), str(quantity), str(product.price)]
+            create_pdf(" to me ", lst, "cs308shopping@gmail.com",random_string)
+
+            random_int = random.randint(0, 100000000000)
+            current_datetime = datetime.datetime.now()
+
+            invoice = Invoice(ID= random_int ,name = random_string ,date = current_datetime)
+            print(invoice.name)
+            invoice.save()
             # create_pdf(str(user), lst, str(user.email))
 
             if product.discount != 0:
@@ -267,12 +316,17 @@ def buy(request):
             Cart.objects.get(product_id = product_id).delete()
             messages.success(request,f"Product is bought successfully.You can check the delivery process in delivery tab")
             product.quantity_in_stocks -= quantity
+            product.popularity += quantity
             product.purchased = True
             product.save()
             purchased_item = PurchaseHistory.objects.create(ID = record_count_p + 1,product = purchased,user=user)
             purchased_item.save()
-            return render(request,"buy.html",{"product":product})
+
+
+            in_pdf = "http://127.0.0.1:8000/" + random_string+".pdf"
+            return render(request,"buy.html",{"product":product, "in_pdf":in_pdf})
         
+
 
 @login_required
 def card_info(request):
