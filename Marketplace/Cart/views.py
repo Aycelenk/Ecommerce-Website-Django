@@ -252,11 +252,13 @@ def buy(request):
             random_int = random.randint(0, 100000000000)
             current_datetime = datetime.datetime.now()
 
-            invoice = Invoice(ID=random_int, name=random_string, date=current_datetime)
+
             print(invoice.name)
-            invoice.save()
+
             print(lstofp)
             in_pdf = "http://127.0.0.1:8000/" + random_string + ".pdf"
+            invoice = Invoice(ID=random_int, name=in_pdf, date=current_datetime)
+            invoice.save()
             return render(request, "buy2.html", {"product": lstofp, "in_pdf": in_pdf})
         else:
             #Buy a single item from the cart
@@ -276,9 +278,7 @@ def buy(request):
             random_int = random.randint(0, 100000000000)
             current_datetime = datetime.datetime.now()
 
-            invoice = Invoice(ID= random_int ,name = random_string ,date = current_datetime)
-            print(invoice.name)
-            invoice.save()
+
             # create_pdf(str(user), lst, str(user.email))
 
             if product.discount != 0:
@@ -322,8 +322,12 @@ def buy(request):
             purchased_item = PurchaseHistory.objects.create(ID = record_count_p + 1,product = purchased,user=user)
             purchased_item.save()
 
+            in_pdf = "http://127.0.0.1:8000/" + random_string + ".pdf"
+            invoice = Invoice(ID=random_int, name=in_pdf, date=current_datetime)
+            print(invoice.name)
+            invoice.save()
 
-            in_pdf = "http://127.0.0.1:8000/" + random_string+".pdf"
+
             return render(request,"buy.html",{"product":product, "in_pdf":in_pdf})
         
 
