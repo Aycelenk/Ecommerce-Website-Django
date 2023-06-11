@@ -7,6 +7,7 @@
 {% block title %} Deliveries {% endblock %}
 
 {% block content %}
+<div class="container mt-3">
 <div class="cart_section">
     {% if request.user.is_authenticated %}
         {% if products|length == 0  %}
@@ -34,10 +35,17 @@
                                             <div class="cart_item_title">Quantity</div>
                                             <div class="cart_item_text">{{product.quantity}}</div>
                                         </div>
+                                        {% if product.purchased_price == 0 %}
+                                        <div class="cart_item_price cart_info_col">
+                                            <div class="cart_item_title">Price</div>
+                                            <div class="cart_item_text">{{product.price}} TL</div>
+                                        </div>
+                                        {% else %}
                                         <div class="cart_item_price cart_info_col">
                                             <div class="cart_item_title">Price</div>
                                             <div class="cart_item_text">{{product.purchased_price}} TL</div>
-                                        </div> 
+                                        </div>
+                                        {% endif %} 
                                         <div class="cart_item_total cart_info_col">
                                             <div class="cart_item_title">Model</div>
                                             <div class="cart_item_text">{{product.model}}</div>
@@ -51,23 +59,44 @@
                                             <div class="cart_item_text">{{product.distributor_info}}</div>
                                         </div>
                                         <div class="cart_item_total cart_info_col">
+                                            <div class="cart_item_title">Delivery Adress</div>
+                                            <div class="cart_item_text">{{product.delivery_address}}</div>
+                                        </div>
+                                        <div class="cart_item_total cart_info_col">
                                             <div class="cart_item_title">Status</div>
                                             <div class="cart_item_text">{{product.order_process_status}}</div>
                                         </div>
                                         
+                                        {% if product.order_process_status != "delivered" %}
+                                        <form method="post" class="justify-content-center" action="{% url 'delivery' %}">
+                                            {% csrf_token %}
+                                            <input type="hidden" name="command" value="cancel">
+                                            <input type="hidden" name="product_id" value="{{product.ID}}">
+                                            <button class="btn btn-danger" type="submit">Cancel</button>
+                                        </form>
+                                        {% else %}
                                         <form method="post" class="justify-content-center" action="{% url 'delivery' %}">
                                             {% csrf_token %}
                                             <input type="hidden" name="command" value="delete">
                                             <input type="hidden" name="product_id" value="{{product.ID}}">
-                                            <button class="btn btn-danger" type="submit">Cancel</button>
+                                            <button class="btn btn-danger" type="submit">Delete</button>
                                         </form>
-
+                                        {% endif %}
                                     </div>
                                 </li>
                             </ul>
                             <br>
                             <br>
                             <br>
+                            {% if user.role == "product manager" %}
+                            <form method="post" action="{% url 'delivery' %}">
+                                {% csrf_token %}
+                                <input type="text" name="newstatus">
+                                <input type="hidden" name="command" value="set">
+                                <input type="hidden" name="product_id" value="{{product.ID}}">
+                                <button class="btn btn-primary" type="submit">Status Update</button>
+                            </form>
+                            {% endif %}
                             {% endfor %}
                         </div>
                     </div>
@@ -79,5 +108,6 @@
     <h5 class="alert-heading col-lg-10"> You are not logged in</h5>
     <h5 class="alert-heading col-lg-10">Please log in to see your deliveries.</h5>
     {% endif %}
+</div>
 </div>
 {% endblock %}

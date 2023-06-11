@@ -2,7 +2,7 @@ from django.shortcuts import render,redirect,get_object_or_404
 from .models import Cart,PurchaseHistory
 from Main.models import Account
 from Main.helper_functions import check_anonymous_cart_products,get_products_from_cart_object,total_price,price_quantity
-from Product.models import InStockProduct,OrderedProduct,Users
+from Product.models import InStockProduct,OrderedProduct,Users,PurchasedProduct
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from django.db.models.functions import ExtractMonth
@@ -145,7 +145,13 @@ def cart(request):
                     anon_user = Users.objects.create_user(is_active = False,role = "Anonymous User")
                 cart_item = Cart.objects.create(product= product,user = anon_user,quantity = quantity)
                 cart_item.save()
-    if  not request.user.is_authenticated:
+    
+    if Users.objects.filter(username = "Anonymous User").exists():
+        anon_user = Users.objects.get(username = "Anonymous User")
+    else:
+        pass
+
+    if not request.user.is_authenticated:
         cart_items = Cart.objects.filter(user = anon_user)
         related_user = anon_user
     else:
@@ -175,31 +181,51 @@ def buy(request):
             user = request.user
             for product in products:
                 record_count_o = OrderedProduct.objects.count()
+                record_count_purchased = PurchasedProduct.objects.count()
                 record_count_p = PurchaseHistory.objects.count()
                 quantity = products[product]
+                address = request.POST.get("address")
                 if product.discount != 0:
                     ordered_item = OrderedProduct.objects.create(ID = record_count_o + 1,name= product.name,model=product.model,
                     number=product.number,description=product.description,price= product.newPrice,
                     warranty_status=product.warranty_status,distributor_info=product.distributor_info,
-                    order_number=str(record_count_o + 1),delivery_address = "",recipient=user,quantity= quantity,purchased_price = product.newPrice,
+                    order_number=str(record_count_o + 1),delivery_address = address,recipient=user,quantity= quantity,purchased_price = product.newPrice,
                     InstockID = product.ID)
+
+                    purchased = PurchasedProduct.objects.create(ID = record_count_purchased + 1,name= ordered_item.name,model=ordered_item.model,
+                    number=ordered_item.number,description=ordered_item.description,price= ordered_item.purchased_price,
+                    warranty_status=ordered_item.warranty_status,distributor_info=ordered_item.distributor_info,
+                    user=user,quantity= quantity,purchased_price = product.newPrice)
+                    purchased.save()
                     product.purchased_price = product.newPrice
+
+                    ordered_item.InstockID = purchased.ID
                     ordered_item.save()
                 else:
                     ordered_item = OrderedProduct.objects.create(ID = record_count_o + 1,name= product.name,model=product.model,
                     number=product.number,description=product.description,price=product.price,
                     warranty_status=product.warranty_status,distributor_info=product.distributor_info,
-                    order_number=str(record_count_o + 1),delivery_address = "",recipient=user,quantity= quantity,purchased_price = product.price,
+                    order_number=str(record_count_o + 1),delivery_address = address,recipient=user,quantity= quantity,purchased_price = product.price,
                     InstockID = product.ID)
+
+                    purchased = PurchasedProduct.objects.create(ID = record_count_purchased + 1,name= ordered_item.name,model=ordered_item.model,
+                    number=ordered_item.number,description=ordered_item.description,price= ordered_item.purchased_price,
+                    warranty_status=ordered_item.warranty_status,distributor_info=ordered_item.distributor_info,
+                    user=user,quantity= quantity,purchased_price = product.newPrice)
+                    purchased.save()
+
                     product.purchased_price = product.price
+                    ordered_item.InstockID = purchased.ID
                     ordered_item.save()
+
                 Cart.objects.get(product_id = product.ID).delete()
                 product.quantity_in_stocks -= quantity
                 product.purchased = True
                 product.save()
                 
-                purchased_item = PurchaseHistory.objects.create(ID = record_count_p + 1,product = product,user=user)
+                purchased_item = PurchaseHistory.objects.create(ID = record_count_p + 1,product = purchased,user=user)
                 purchased_item.save()
+
             messages.success(request,f"Products are bought successfully.You can check the delivery process in delivery tab")
             return render(request,"buy.html",{"products":products})
         else:
@@ -208,36 +234,52 @@ def buy(request):
             quantity = int(request.POST.get("quantity"))
             record_count_o = OrderedProduct.objects.count()
             record_count_p = PurchaseHistory.objects.count()
+            record_count_purchased = PurchasedProduct.objects.count()
             product = get_object_or_404(InStockProduct,pk = product_id)
             user = request.user
             # lst = [str(product), str(quantity), str(product.price)]
             # create_pdf(" to me ", lst, "cs308shopping@gmail.com")
             # create_pdf(str(user), lst, str(user.email))
-
+            address = request.POST.get("address")
             if product.discount != 0:
 
                 
                 ordered_item = OrderedProduct.objects.create(ID = record_count_o + 1,name= product.name,model=product.model,
                 number=product.number,description=product.description,price=product.newPrice,
                 warranty_status=product.warranty_status,distributor_info=product.distributor_info,
-                order_number=str(record_count_o + 1),delivery_address = "",recipient=user,quantity= quantity,
+                order_number=str(record_count_o + 1),delivery_address = address,recipient=user,quantity= quantity,
                 purchased_price = product.newPrice,InstockID = product.ID)
+
+                purchased = PurchasedProduct.objects.create(ID = record_count_purchased + 1,name= ordered_item.name,model=ordered_item.model,
+                number=ordered_item.number,description=ordered_item.description,price= ordered_item.purchased_price,
+                warranty_status=ordered_item.warranty_status,distributor_info=ordered_item.distributor_info,
+                user=user,quantity= quantity,purchased_price = product.newPrice)
+                purchased.save()
                 product.purchased_price = product.newPrice
+                ordered_item.InstockID = purchased.ID
                 ordered_item.save()
             else:
                 ordered_item = OrderedProduct.objects.create(ID = record_count_o + 1,name= product.name,model=product.model,
                 number=product.number,description=product.description,price=product.price,
                 warranty_status=product.warranty_status,distributor_info=product.distributor_info,
-                order_number=str(record_count_o + 1),delivery_address = "",recipient=user,quantity= quantity,
+                order_number=str(record_count_o + 1),delivery_address = address,recipient=user,quantity= quantity,
                 purchased_price = product.price,InstockID = product.ID)
+
+                purchased = PurchasedProduct.objects.create(ID = record_count_purchased + 1,name= ordered_item.name,model=ordered_item.model,
+                number=ordered_item.number,description=ordered_item.description,price= ordered_item.purchased_price,
+                warranty_status=ordered_item.warranty_status,distributor_info=ordered_item.distributor_info,
+                user=user,quantity= quantity,purchased_price = product.newPrice)
+                purchased.save()
                 product.purchased_price = product.price
+                ordered_item.InstockID = purchased.ID
                 ordered_item.save()
+
             Cart.objects.get(product_id = product_id).delete()
             messages.success(request,f"Product is bought successfully.You can check the delivery process in delivery tab")
             product.quantity_in_stocks -= quantity
             product.purchased = True
             product.save()
-            purchased_item = PurchaseHistory.objects.create(ID = record_count_p + 1,product = product,user=user)
+            purchased_item = PurchaseHistory.objects.create(ID = record_count_p + 1,product = purchased,user=user)
             purchased_item.save()
             return render(request,"buy.html",{"product":product})
         

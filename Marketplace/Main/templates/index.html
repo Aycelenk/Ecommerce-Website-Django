@@ -16,13 +16,13 @@
           {% csrf_token %}
           <input type="hidden" name="command" value="sort">
           <input type="hidden" name="order" value="descending">
-          <button class="btn btn-primary mb-2 mr-2" type="submit">Sort By Price(Descending)</button>
+          <button class="btn btn-success mb-2 mr-2" type="submit">Sort By Price(Descending)</button>
         </form>
         <form method="post" action="{% url 'index' %}">
           {% csrf_token %}
           <input type="hidden" name="command" value="sort">
           <input type="hidden" name="order" value="ascending">
-          <button class="btn btn-primary mb-2" type="submit">Sort By Price(Ascending)</button>
+          <button class="btn btn-success mb-2" type="submit">Sort By Price(Ascending)</button>
         </form>
       </div>
       <form>
@@ -33,9 +33,20 @@
             <span class="checkmark"></span>
           </label>
           {% endfor %}
-          <button class="btn btn-primary mb-2" type="submit">Filter</button>
+          <button class="btn btn-success mb-2" type="submit">Filter</button>
         </div>
       </form>
+      {% if request.user.role == "product manager" %}
+        <br>
+        <form method="post" action="{% url 'index'  %}">
+          {% csrf_token %}
+          <input type="text" name="newcategory" placeholder="New Category">
+          <input type="hidden" name="command" value="set">
+          <button class="btn btn-primary" type="submit">Add</button>
+        </form>
+        <br>
+        <a href="{% url 'createform' %}">Press Here to create a Product!</a>
+      {% endif %}
     </div>
     <div class="col-lg-9">
       <div class="row">

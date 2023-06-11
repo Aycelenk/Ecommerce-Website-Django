@@ -1,5 +1,5 @@
 from django.db import models
-from Product.models import Users,InStockProduct
+from Product.models import Users,InStockProduct,PurchasedProduct
 from django.utils import timezone
 # Create your models here.
 class Cart(models.Model):
@@ -13,7 +13,7 @@ class Cart(models.Model):
 
 class PurchaseHistory(models.Model):
     ID = models.IntegerField(primary_key=True,unique=True,default=0)
-    product = models.ForeignKey(InStockProduct,related_name="purchase_history",on_delete=models.CASCADE)
+    product = models.ForeignKey(PurchasedProduct,related_name="purchase_history",on_delete=models.CASCADE)
     user = models.ForeignKey(Users,related_name="purchase_history",on_delete=models.CASCADE)
     date_added = models.DateTimeField(default=timezone.now)
     refund_requested = models.BooleanField(verbose_name='Refund Requested',default=False)
@@ -28,7 +28,7 @@ class PurchaseHistory(models.Model):
 
 class Refund(models.Model):
     ID = models.IntegerField(primary_key=True,unique=True,default=0)
-    product = models.ForeignKey(InStockProduct,related_name="refund",on_delete=models.CASCADE)
+    product = models.ForeignKey(PurchasedProduct,related_name="refund",on_delete=models.CASCADE)
     user = models.ForeignKey(Users,related_name="refund",on_delete=models.CASCADE)
     date_added = models.DateTimeField(default=timezone.now)
     Approved = models.BooleanField(verbose_name='Approved',default=False)

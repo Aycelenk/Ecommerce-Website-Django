@@ -1,0 +1,12 @@
+{% extends 'base.html' %}
+{% load crispy_forms_tags %}
+{% block title %} ProductForm {% endblock %}
+
+{% block content %}
+<!-- create_product.html -->
+<form method="post" enctype="multipart/form-data" action="{% url 'createform' %}">
+    {% csrf_token %}
+    {{ form|crispy }}
+    <button type="submit">Create Product</button>
+</form>
+{% endblock %}
