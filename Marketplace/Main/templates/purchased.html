@@ -8,6 +8,7 @@
 {% block title %} Purchase History {% endblock %}
 
 {% block content %}
+<div class="container mt-3">
 <div class="cart_section">
     {% if request.user.is_authenticated %}
         {% if products|length == 0 %}
@@ -168,5 +169,6 @@
     <h5 class="alert-heading col-lg-10"> You are not logged in</h5>
     <h5 class="alert-heading col-lg-10">Please log in to see your purchases.</h5>
     {% endif %}
+</div>
 </div>
 {% endblock %}
