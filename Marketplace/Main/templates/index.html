@@ -16,13 +16,13 @@
           {% csrf_token %}
           <input type="hidden" name="command" value="sort">
           <input type="hidden" name="order" value="descending">
-          <button class="btn btn-primary mb-2 mr-2" type="submit">Sort By Price(Descending)</button>
+          <button class="btn btn-success mb-2 mr-2" type="submit">Sort By Price(Descending)</button>
         </form>
         <form method="post" action="{% url 'index' %}">
           {% csrf_token %}
           <input type="hidden" name="command" value="sort">
           <input type="hidden" name="order" value="ascending">
-          <button class="btn btn-primary mb-2" type="submit">Sort By Price(Ascending)</button>
+          <button class="btn btn-success mb-2" type="submit">Sort By Price(Ascending)</button>
         </form>
       </div>
       <form>
@@ -33,7 +33,7 @@
             <span class="checkmark"></span>
           </label>
           {% endfor %}
-          <button class="btn btn-primary mb-2" type="submit">Filter</button>
+          <button class="btn btn-success mb-2" type="submit">Filter</button>
         </div>
       </form>
     </div>
