@@ -200,8 +200,11 @@ def delivery(request):
             messages.success(request,f"You successfully deleted this ordered product")
 
     if request.user.is_authenticated:
-        ordered_products = OrderedProduct.objects.filter(recipient = request.user)
-        #ordered_products = OrderedProduct.objects.all()
+        if request.user.role == "product manager":
+            ordered_products = OrderedProduct.objects.all()
+        else:
+            ordered_products = OrderedProduct.objects.filter(recipient = request.user)
+            #ordered_products = OrderedProduct.objects.all()
         return render(request,"delivery.html",{"products":ordered_products})
     else:
         products = []

@@ -103,11 +103,7 @@
                 <i class="me-1 fa fa-book"></i> Account
               </a>
             </li>
-            <li class="nav-item">
-                <a href="{% url 'chart'%}" class="btn btn-success shadow-0 bg-success">
-                  <i class="me-1 fa fa-book"></i> Chart
-                </a>
-              </li>
+            
             {% else %}
             {% if request.user.role == "product manager" %}
             <li class="nav-item">
@@ -115,6 +111,14 @@
                 <i class="me-1 fa fa-globe"></i> Deliveries
               </a>
             </li>
+            
+            {% endif %}
+            {% if request.user.role == "sales manager" %}
+            <li class="nav-item">
+                <a href="{% url 'chart'%}" class="btn btn-success shadow-0 bg-success">
+                  <i class="me-1 fa fa-book"></i> Chart
+                </a>
+              </li>
             {% endif %}
             <li class="nav-item">
               <p class="btn btn-success shadow-0 bg-success">Welcome {{request.user.username}}</p>
