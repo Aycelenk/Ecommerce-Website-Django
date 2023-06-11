@@ -104,6 +104,13 @@
               </a>
             </li>
             {% else %}
+            {% if request.user.role == "product manager" %}
+            <li class="nav-item">
+              <a href="{% url 'delivery' %}" class="btn btn-success shadow-0 bg-success">
+                <i class="me-1 fa fa-globe"></i> Deliveries
+              </a>
+            </li>
+            {% endif %}
             <li class="nav-item">
               <p class="btn btn-success shadow-0 bg-success">Welcome {{request.user.username}}</p>
             </li>
