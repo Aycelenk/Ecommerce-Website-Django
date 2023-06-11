@@ -5,7 +5,10 @@ from Main.helper_functions import check_anonymous_cart_products,get_products_fro
 from Product.models import InStockProduct,OrderedProduct,Users
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
+from django.db.models.functions import ExtractMonth
+from django.db.models import Count
 from django.core import serializers
+from Cart.forms import DateForm
 # Create your views here.
 import json
 from fpdf import FPDF
@@ -263,3 +266,37 @@ def card_info(request):
     else:
         #clients buys all the cart
         return render(request,"card_info.html")
+from datetime import datetime
+import calendar
+def chart(request):
+    orders=PurchaseHistory.objects.annotate(month=ExtractMonth('date_added')).values('month').annotate(count=Count('ID')).values('month','count')
+    start = request.GET.get('start')
+    end = request.GET.get('end')
+    monthNumber=[]
+    totalOrders=[]
+    month=[]
+    order=[]
+    startmonth = 0
+    endmonth = 0
+    if start:
+        user_date = datetime.strptime(start,"%Y-%m-%d" )
+        startmonth = user_date.month
+    if end:
+        user_date = datetime.strptime(end,"%Y-%m-%d" )
+        endmonth = user_date.month
+
+    for d in orders:
+        monthNumber.append(d['month'] )
+        totalOrders.append(d['count'])
+    
+    i=0
+    while (i<len(monthNumber)):
+        if endmonth >= monthNumber[i] >= startmonth:
+            month.append(calendar.month_name[monthNumber[i]])
+            order.append(totalOrders[i])
+        i = i+1
+
+
+
+
+    return render(request, 'chart.html',{'monthNumber':monthNumber, 'totalOrders':totalOrders, 'form': DateForm(),'start':start,'startmonth':startmonth,'end':end,'endmonth':endmonth,'month':month,'order':order })

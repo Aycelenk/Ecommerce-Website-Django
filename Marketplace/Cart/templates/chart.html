@@ -1,0 +1,49 @@
+{% extends 'base.html' %}
+
+{% block title %} Chart {% endblock %}
+{% load static %}
+{% block link %}
+<link rel="stylesheet" type="text/css" href="{% static 'detail.css' %}">
+
+{% endblock %}
+{% block content %}
+
+<form method="GET" action="{% url 'chart' %}" style="margin-top:20px; margin-left:20px;">
+    {{ form.as_p }}
+
+    <button>Submit</button>
+</form>
+<div>
+    
+    
+    <div>
+        <canvas id="myChart" style="margin-right:150px; margin-left:150px;"></canvas>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script> 
+<script type="text/javascript">
+    const labels = {{month|safe}};
+    const data = {
+        labels: labels,
+        datasets: [{
+            label: 'Orders by Month',
+            backgroundColor: 'rgb(255, 99, 132)',
+            borderColor: 'rgb(255, 99, 132)',
+            data: {{order}},
+        }]
+    };
+    const config = {
+        type: 'bar',
+        data,
+        options: {}
+    };
+
+    var myChart = new Chart(
+        document.getElementById('myChart'),
+        config
+    );
+</script> 
+
+{% endblock %}
+
