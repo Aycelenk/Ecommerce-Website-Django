@@ -181,11 +181,12 @@ def buy(request):
                 record_count_purchased = PurchasedProduct.objects.count()
                 record_count_p = PurchaseHistory.objects.count()
                 quantity = products[product]
+                address = request.POST.get("address")
                 if product.discount != 0:
                     ordered_item = OrderedProduct.objects.create(ID = record_count_o + 1,name= product.name,model=product.model,
                     number=product.number,description=product.description,price= product.newPrice,
                     warranty_status=product.warranty_status,distributor_info=product.distributor_info,
-                    order_number=str(record_count_o + 1),delivery_address = "",recipient=user,quantity= quantity,purchased_price = product.newPrice,
+                    order_number=str(record_count_o + 1),delivery_address = address,recipient=user,quantity= quantity,purchased_price = product.newPrice,
                     InstockID = product.ID)
 
                     purchased = PurchasedProduct.objects.create(ID = record_count_purchased + 1,name= ordered_item.name,model=ordered_item.model,
@@ -194,12 +195,14 @@ def buy(request):
                     user=user,quantity= quantity,purchased_price = product.newPrice)
                     purchased.save()
                     product.purchased_price = product.newPrice
+
+                    ordered_item.InstockID = purchased.ID
                     ordered_item.save()
                 else:
                     ordered_item = OrderedProduct.objects.create(ID = record_count_o + 1,name= product.name,model=product.model,
                     number=product.number,description=product.description,price=product.price,
                     warranty_status=product.warranty_status,distributor_info=product.distributor_info,
-                    order_number=str(record_count_o + 1),delivery_address = "",recipient=user,quantity= quantity,purchased_price = product.price,
+                    order_number=str(record_count_o + 1),delivery_address = address,recipient=user,quantity= quantity,purchased_price = product.price,
                     InstockID = product.ID)
 
                     purchased = PurchasedProduct.objects.create(ID = record_count_purchased + 1,name= ordered_item.name,model=ordered_item.model,
@@ -209,7 +212,9 @@ def buy(request):
                     purchased.save()
 
                     product.purchased_price = product.price
+                    ordered_item.InstockID = purchased.ID
                     ordered_item.save()
+
                 Cart.objects.get(product_id = product.ID).delete()
                 product.quantity_in_stocks -= quantity
                 product.purchased = True
@@ -217,6 +222,7 @@ def buy(request):
                 
                 purchased_item = PurchaseHistory.objects.create(ID = record_count_p + 1,product = purchased,user=user)
                 purchased_item.save()
+
             messages.success(request,f"Products are bought successfully.You can check the delivery process in delivery tab")
             return render(request,"buy.html",{"products":products})
         else:
@@ -231,29 +237,29 @@ def buy(request):
             # lst = [str(product), str(quantity), str(product.price)]
             # create_pdf(" to me ", lst, "cs308shopping@gmail.com")
             # create_pdf(str(user), lst, str(user.email))
-
+            address = request.POST.get("address")
             if product.discount != 0:
 
                 
                 ordered_item = OrderedProduct.objects.create(ID = record_count_o + 1,name= product.name,model=product.model,
                 number=product.number,description=product.description,price=product.newPrice,
                 warranty_status=product.warranty_status,distributor_info=product.distributor_info,
-                order_number=str(record_count_o + 1),delivery_address = "",recipient=user,quantity= quantity,
+                order_number=str(record_count_o + 1),delivery_address = address,recipient=user,quantity= quantity,
                 purchased_price = product.newPrice,InstockID = product.ID)
-                ordered_item.save()
 
                 purchased = PurchasedProduct.objects.create(ID = record_count_purchased + 1,name= ordered_item.name,model=ordered_item.model,
                 number=ordered_item.number,description=ordered_item.description,price= ordered_item.purchased_price,
                 warranty_status=ordered_item.warranty_status,distributor_info=ordered_item.distributor_info,
                 user=user,quantity= quantity,purchased_price = product.newPrice)
                 purchased.save()
-
                 product.purchased_price = product.newPrice
+                ordered_item.InstockID = purchased.ID
+                ordered_item.save()
             else:
                 ordered_item = OrderedProduct.objects.create(ID = record_count_o + 1,name= product.name,model=product.model,
                 number=product.number,description=product.description,price=product.price,
                 warranty_status=product.warranty_status,distributor_info=product.distributor_info,
-                order_number=str(record_count_o + 1),delivery_address = "",recipient=user,quantity= quantity,
+                order_number=str(record_count_o + 1),delivery_address = address,recipient=user,quantity= quantity,
                 purchased_price = product.price,InstockID = product.ID)
 
                 purchased = PurchasedProduct.objects.create(ID = record_count_purchased + 1,name= ordered_item.name,model=ordered_item.model,
@@ -261,9 +267,10 @@ def buy(request):
                 warranty_status=ordered_item.warranty_status,distributor_info=ordered_item.distributor_info,
                 user=user,quantity= quantity,purchased_price = product.newPrice)
                 purchased.save()
-
                 product.purchased_price = product.price
+                ordered_item.InstockID = purchased.ID
                 ordered_item.save()
+
             Cart.objects.get(product_id = product_id).delete()
             messages.success(request,f"Product is bought successfully.You can check the delivery process in delivery tab")
             product.quantity_in_stocks -= quantity

@@ -10,5 +10,6 @@ urlpatterns = [
     path("signup/",views.signup,name = "signup"),
     path("delivery",views.delivery,name="delivery"),
     path("purchased",views.purchased,name="purchased_items"),
-    path("account/",views.accounts,name = "account")
+    path("account/",views.accounts,name = "account"),
+    path("createform/",views.create_product,name="createform")
 ]

@@ -69,8 +69,12 @@ def newPrice_calc(products):
             product.newPrice = (product.price- ((product.price* product.discount)/100))
             product.save()
         else: 
-            product.nemPrice=0
+            product.newPrice=0
             product.save()
+
+def SetNewPriceForOne(product):
+    product.newPrice = (product.price- ((product.price* product.discount)/100))
+    product.save()
 
 def DaysRemain(products):
     dic = {}

@@ -36,6 +36,17 @@
           <button class="btn btn-success mb-2" type="submit">Filter</button>
         </div>
       </form>
+      {% if request.user.role == "product manager" %}
+        <br>
+        <form method="post" action="{% url 'index'  %}">
+          {% csrf_token %}
+          <input type="text" name="newcategory" placeholder="New Category">
+          <input type="hidden" name="command" value="set">
+          <button class="btn btn-primary" type="submit">Add</button>
+        </form>
+        <br>
+        <a href="{% url 'createform' %}">Press Here to create a Product!</a>
+      {% endif %}
     </div>
     <div class="col-lg-9">
       <div class="row">

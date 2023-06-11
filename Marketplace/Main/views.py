@@ -3,7 +3,7 @@ from django.http import HttpResponse
 from Cart.models import PurchaseHistory,Refund
 from Product.models import InStockProduct, OrderedProduct,Category,Users,PurchasedProduct
 from .models import Account
-from .forms import LoginForm,SignupForm
+from .forms import LoginForm,SignupForm,ProductForm
 from .helper_functions import check_anonymous_cart_products,newPrice_calc,DaysRemain,checkDiscountChange
 from django.contrib.auth import authenticate,logout
 from django.contrib.auth import login as auth_login
@@ -30,6 +30,7 @@ def index(request):
 
     if request.user.is_authenticated:
         check_anonymous_cart_products(request)
+
     if request.method == "POST":
         query = request.POST.get("search_field")
         command = request.POST.get("command")
@@ -59,6 +60,11 @@ def index(request):
                 "instockproducts": items,
                 "categories":categories
             })
+        elif command == "set":
+            #product manager set new category
+            new_category = request.POST.get("newcategory")
+            new_cat = Category.objects.create(name = new_category)
+            new_cat.save()
         else:
             order = request.POST.get("order")
             if order == "descending":
@@ -79,7 +85,10 @@ def index(request):
                 })
         
     if request.user.is_staff == True and request.user.is_superuser == True:
-        return redirect("logout")
+        if request.user.role == "sales manager" or request.user.role == "product manager":
+            pass
+        else:
+            return redirect("logout")
     
     #instockproducts = InStockProduct.objects.all()
     orderedproducts = OrderedProduct.objects.all()
@@ -94,7 +103,7 @@ def index(request):
     else:
         instockproducts = InStockProduct.objects.all()
     if not instockproducts:
-        messages.success(request, "No products found")
+        messages.error(request, "No products found")
     data = {
         "instockproducts": instockproducts,
         "orderedproducts": orderedproducts,
@@ -172,15 +181,23 @@ def delivery(request):
     if request.method == "POST":
         command = request.POST.get("command")
         product_id = request.POST.get("product_id")
-        if command == "delete":
+        if command == "cancel":
             said_ordered_product = OrderedProduct.objects.get(ID = product_id)
             purchased_product_id = said_ordered_product.InstockID
             said_purchased_product = PurchasedProduct.objects.get(ID = purchased_product_id)
-            said_purchased_item = PurchaseHistory.objects.get(product = said_purchased_product)
             OrderedProduct.objects.get(ID = product_id).delete()
-            said_purchased_product.purchased = False
-            said_purchased_product.save()
-            PurchaseHistory.objects.get(product = said_purchased_product).delete()
+            said_purchased_product.delete()
+            messages.success(request,f"You successfuly cancelled a delivery!")
+        elif command == "set":
+            ordered_product = OrderedProduct.objects.get(ID = product_id)
+            new_status = request.POST.get("newstatus")
+            ordered_product.order_process_status = new_status
+            ordered_product.save()
+        else:
+            #burda sadece orderedproduct silinecek çünkü item çoktan delivered olmuş
+            ordered_product = OrderedProduct.objects.get(ID = product_id)
+            ordered_product.delete()
+            messages.success(request,f"You successfully deleted this ordered product")
 
     if request.user.is_authenticated:
         ordered_products = OrderedProduct.objects.filter(recipient = request.user)
@@ -244,3 +261,17 @@ def purchased(request):
         else:
             products = []
             return render(request,"purchased.html",{"products":products})
+        
+def create_product(request):
+    if request.method == 'POST':
+        form = ProductForm(request.POST, request.FILES)
+        if form.is_valid():
+            form.save()
+            messages.success(request,f"Successfully created new Product")
+            return redirect("index")
+            # Perform any additional actions or redirect as needed
+    else:
+        form = ProductForm()
+
+    context = {'form': form}
+    return render(request, 'create_product.html', context)

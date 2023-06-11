@@ -79,6 +79,7 @@
               <a class="nav-link bg-success" href="{% url 'signup' %}">Sign Up</a>
             </li>
             {% endif %}
+            {% if request.user.role != "sales manager" and request.user.role != "product manager" and request.user.role != "admin " %}
             <li class="nav-item">
               <a href="{% url 'cart' %}" class="btn btn-success shadow-0 bg-success">
                 <i class="me-1 fa fa-shopping-basket"></i> Your cart
@@ -102,6 +103,11 @@
                 <i class="me-1 fa fa-book"></i> Account
               </a>
             </li>
+            {% else %}
+            <li class="nav-item">
+              <p class="btn btn-success shadow-0 bg-success">Welcome {{request.user.username}}</p>
+            </li>
+            {% endif %}
           </ul>
         </div>
       </div>

@@ -18,6 +18,8 @@ from django.urls import path,include
 from django.conf.urls.static import static
 from django.conf import settings
 
+admin.site.site_header = 'Marketplace Customization'
+
 urlpatterns = [
     path("",include("Main.urls")),
     path("admin/", admin.site.urls),
