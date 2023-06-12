@@ -1,23 +1,19 @@
 {% extends 'base.html' %}
-
 {% block content %}
     {% if product %}
-        <p>Your item {{product.name}} has been bought</p>
+        <p>Your item {{product}}  has been bought</p>
     {% else %}
         {% for product in products %}
-        <p>Your item {{product.name}} has been bought</p>
+        <p>Your item {{product}}  has been bought</p>
         {% endfor %}
     {% endif %}
-
 <a href="{% url 'delivery' %}">Click Here to see your delivery status</a>
 <!--
 <h1>PDF Example</h1>
     <p>Open a PDF file <a href="\cs_308_project\Marketplace\pdf_2.pdf">example</a>.</p>
     -->
-
   <body>
     <p>Clicl link below to open and see your invoice </p>
     <p>Open a PDF file <a href={{in_pdf}} target="_blank" >here</a>.</p>
   </body>
-
 {% endblock %}

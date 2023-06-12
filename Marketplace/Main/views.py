@@ -56,6 +56,7 @@ def index(request):
                     items = items.filter(Q(name__icontains=query) | Q(description__icontains=query))
                 except:
                     items = None
+                    messages.error(request, f"This item doesnt exist")
             return render(request, 'index.html', {
                 "instockproducts": items,
                 "categories":categories
@@ -82,6 +83,24 @@ def index(request):
                 return render(request, 'index.html', {
                     "instockproducts": sorted_products,
                     "categories":categories
+                })
+
+            order = request.POST.get("popularity")
+            if order == "descending":
+                all_products = InStockProduct.objects.all()
+                sorted_products = sorted(all_products, key=lambda x: x.popularity, reverse=True)
+                messages.success(request, "Items sorted via popularity in descending order successfully")
+                return render(request, 'index.html', {
+                    "instockproducts": sorted_products,
+                    "categories": categories
+                })
+            else:
+                all_products = InStockProduct.objects.all()
+                sorted_products = sorted(all_products, key=lambda x: x.popularity, reverse=False)
+                messages.success(request, "Items sorted via popularity in ascending order successfully")
+                return render(request, 'index.html', {
+                    "instockproducts": sorted_products,
+                    "categories": categories
                 })
         
     if request.user.is_staff == True and request.user.is_superuser == True:
