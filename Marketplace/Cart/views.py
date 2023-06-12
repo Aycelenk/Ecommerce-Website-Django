@@ -8,6 +8,7 @@ from django.contrib import messages
 from django.db.models.functions import ExtractMonth
 from django.db.models import Count
 from Cart.forms import DateForm
+from django.utils import timezone
 # Create your views here.
 import json
 from fpdf import FPDF
@@ -252,7 +253,7 @@ def buy(request):
             random_string = generate_random_string(20)
             create_pdf(" to me ", lst, "cs308shopping@gmail.com", random_string)
             random_int = random.randint(0, 100000000000)
-            current_datetime = datetime.datetime.now()
+            current_datetime = timezone.now()
             #print(invoice.name)
             print(lstofp)
             in_pdf = "http://127.0.0.1:8000/" + random_string + ".pdf"
@@ -278,7 +279,7 @@ def buy(request):
             lst = [str(product), str(quantity), str(product.price)]
             create_pdf(" to me ", lst, "cs308shopping@gmail.com", random_string)
             random_int = random.randint(0, 100000000000)
-            current_datetime = datetime.datetime.now()
+            current_datetime = timezone.now()
 
             address = request.POST.get("address")
             if product.discount != 0:
