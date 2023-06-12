@@ -1,7 +1,7 @@
 from django.shortcuts import render,redirect,get_object_or_404
 from django.http import HttpResponse
 from Cart.models import PurchaseHistory,Refund
-from Product.models import InStockProduct, OrderedProduct,Category,Users,PurchasedProduct
+from Product.models import InStockProduct, OrderedProduct,Category,Users,PurchasedProduct,Invoice
 from .models import Account
 from .forms import LoginForm,SignupForm,ProductForm
 from .helper_functions import check_anonymous_cart_products,newPrice_calc,DaysRemain,checkDiscountChange
@@ -297,3 +297,7 @@ def create_product(request):
 
     context = {'form': form}
     return render(request, 'create_product.html', context)
+
+def show_invoice(request):
+    Invoices = Invoice.objects.all()
+    return render(request,"show_invoice.html",{"invoices":Invoices})

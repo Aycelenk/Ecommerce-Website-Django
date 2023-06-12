@@ -60,6 +60,11 @@
         </form>
         <br>
         <a href="{% url 'createform' %}">Press Here to create a Product!</a>
+        <a href="{% url 'showinvoice' %}">Press here to view invoices</a>
+      {% endif %}
+      {% if request.user.role == "sales manager" %}
+      <br>
+      <a href="{% url 'showinvoice' %}">Press here to view invoices</a>
       {% endif %}
     </div>
     <div class="col-lg-9">

@@ -118,12 +118,14 @@ class InStockProduct(models.Model):
 
     def __str__(self):
         return self.name
+    
 class Invoice(models.Model):
     ID = models.IntegerField(primary_key=True)
     name = models.CharField(max_length=100)
     date =  models.DateTimeField()
     def __str__(self):
         return self.name
+    
 class OrderedProduct(models.Model):
     ID = models.IntegerField(primary_key=True)
     name = models.CharField(max_length=100)

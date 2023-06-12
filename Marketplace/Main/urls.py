@@ -11,5 +11,6 @@ urlpatterns = [
     path("delivery",views.delivery,name="delivery"),
     path("purchased",views.purchased,name="purchased_items"),
     path("account/",views.accounts,name = "account"),
-    path("createform/",views.create_product,name="createform")
+    path("createform/",views.create_product,name="createform"),
+    path("invoices",views.show_invoice,name="showinvoice")
 ]
