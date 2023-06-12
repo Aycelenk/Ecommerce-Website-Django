@@ -91,20 +91,7 @@
               <a href="{% url 'account'%}" class="btn btn-success shadow-0 bg-success">
                 <i class="me-1 fa fa-book"></i> Account
               </a>
-            </li>
-            {% if request.user.is_authenticated %}
-            <li class="nav-item">
-              <a class="nav-link bg-success" href="{% url 'logout' %}">Logout</a>
-            </li>
-            {% else %}
-            <li class="nav-item">
-              <a class="nav-link bg-success" href="{% url 'login' %}">Login</a>
-            </li>
-            <li class="nav-item">
-              <a class="nav-link bg-success" href="{% url 'signup' %}">Sign Up</a>
-            </li>
-            {% endif %}
-            
+            </li>            
             {% else %}
             {% if request.user.role == "product manager" %}
             <li class="nav-item">
@@ -123,6 +110,18 @@
             {% endif %}
             <li class="nav-item">
               <p class="btn btn-success shadow-0 bg-success">Welcome {{request.user.username}}</p>
+            </li>
+            {% endif %}
+            {% if request.user.is_authenticated %}
+            <li class="nav-item">
+              <a class="nav-link bg-success" href="{% url 'logout' %}">Logout</a>
+            </li>
+            {% else %}
+            <li class="nav-item">
+              <a class="nav-link bg-success" href="{% url 'login' %}">Login</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link bg-success" href="{% url 'signup' %}">Sign Up</a>
             </li>
             {% endif %}
           </ul>
