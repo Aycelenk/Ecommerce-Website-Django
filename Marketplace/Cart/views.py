@@ -7,7 +7,6 @@ from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from django.db.models.functions import ExtractMonth
 from django.db.models import Count
-from django.core import serializers
 from Cart.forms import DateForm
 # Create your views here.
 import json
@@ -19,11 +18,6 @@ from email.mime.base import MIMEBase
 from email import encoders
 import datetime
 from django.shortcuts import render
-from io import BytesIO
-from django.http import HttpResponse
-from django.template.loader import get_template
-from django.views import View
-from xhtml2pdf import pisa
 import random
 import string
 
